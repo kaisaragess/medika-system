@@ -12,8 +12,8 @@ class PegawaiModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_poli', 'nama', 'alamat', 'spesialisasi', 'nomor_telp', 'role'];
-    protected bool $allowEmptyInserts = false;
+// Pastikan username, password, dan token masuk ke sini
+protected $allowedFields = ['nama', 'role', 'spesialisasi', 'id_poli', 'nomor_telp', 'alamat', 'username', 'password', 'token', 'is_active'];    protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [];

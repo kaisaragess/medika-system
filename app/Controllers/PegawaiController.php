@@ -149,4 +149,17 @@ class PegawaiController extends BaseController
         session()->setFlashdata('pesan', 'Data pegawai berhasil dihapus.');
         return redirect()->to('/pegawai');
     }
+
+        public function approve($id)
+    {
+        // Opsional: Cek apakah yang melakukan ini benar-benar role Admin
+        if (session()->get('role') != 'Admin') {
+            return redirect()->to('/')->with('error', 'Akses ditolak! Hanya Super Admin yang bisa menyetujui akun.');
+        }
+
+        $pegawaiModel = new \App\Models\PegawaiModel();
+        $pegawaiModel->update($id, ['is_active' => 1]);
+
+        return redirect()->to('/pegawai')->with('pesan', 'Akun pegawai berhasil disetujui dan diaktifkan.');
+}
 }
