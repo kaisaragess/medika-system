@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\PendaftaranModel;
 use App\Models\PasienModel;
+use App\Models\PoliklinikModel;
 
 class PendaftaranController extends BaseController
 {
@@ -41,51 +42,98 @@ class PendaftaranController extends BaseController
     // ==========================================
     public function create()
     {
-        // Membuat Nomor Pendaftaran Otomatis (Contoh hasil: REG-20260514-8932)
-        $no_pendaftaran_otomatis = 'REG-' . date('Ymd') . '-' . rand(1000, 9999);
+        $pasienModel = new PasienModel();
+        $poliModel = new PoliklinikModel();
 
         $data = [
-            'title'          => 'Pendaftaran Pasien Baru | MedikaSistem',
-            'validation'     => \Config\Services::validation(),
-            'pasien'         => $this->pasienModel->findAll(), // Mengirim data pasien untuk dropdown pilihan
-            'no_pendaftaran' => $no_pendaftaran_otomatis
+            'title'  => 'Pendaftaran Kunjungan Baru',
+            'pasien' => $pasienModel->findAll(),
+            'poli'   => $poliModel->findAll(),
+            'temp_data' => session()->get('temp_kunjungan') 
         ];
 
         return view('pendaftaran/create', $data);
     }
 
+    // Tambahkan fungsi review() ini
+    public function review()
+    {
+        $rules = [
+            'id_pasien' => ['rules' => 'required', 'errors' => ['required' => 'Pasien harus dipilih.']],
+            'id_poli'   => ['rules' => 'required', 'errors' => ['required' => 'Tujuan Poliklinik harus dipilih.']],
+            'keluhan_awal' => ['rules' => 'required|min_length[5]', 'errors' => ['required' => 'Keluhan awal wajib diisi.', 'min_length' => 'Keluhan minimal 5 karakter.']]
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', $this->validator->listErrors());
+        }
+
+        $pasienModel = new PasienModel();
+        $poliModel = new PoliklinikModel();
+        
+        $pasien = $pasienModel->find($this->request->getPost('id_pasien'));
+        $poli = $poliModel->find($this->request->getPost('id_poli'));
+
+        $tempData = [
+            'id_pasien'    => $pasien['id'],
+            'nama_pasien'  => $pasien['nama'], 
+            'id_poli'      => $poli['id'],
+            'nama_poli'    => $poli['nama_poli'], 
+            'keluhan_awal' => $this->request->getPost('keluhan_awal'),
+            'tanggal'      => date('Y-m-d H:i:s'),
+            'petugas'      => session()->get('nama')
+        ];
+
+        session()->set('temp_kunjungan', $tempData);
+        return redirect()->to('/pendaftaran/confirm');
+    }
+
+    // Tambahkan fungsi confirm() ini
+    public function confirm()
+    {
+        if (!session()->has('temp_kunjungan')) {
+            return redirect()->to('/pendaftaran/create')->with('error', 'Tidak ada data kunjungan yang sedang diproses.');
+        }
+
+        $data = [
+            'title'     => 'Konfirmasi Pendaftaran',
+            'temp_data' => session()->get('temp_kunjungan')
+        ];
+
+        return view('pendaftaran/confirm', $data);
+    }
+
     // ==========================================
     // 3. STORE: Menyimpan Data Pendaftaran
     // ==========================================
-    public function store()
+   public function store()
     {
-        // Validasi input
-        if (!$this->validate([
-            'no_pendaftaran' => [
-                'rules'  => 'required|is_unique[pendaftaran.no_pendaftaran]',
-                'errors' => [
-                    'required'  => 'Nomor pendaftaran tidak boleh kosong.',
-                    'is_unique' => 'Nomor pendaftaran sudah digunakan, silakan muat ulang halaman.'
-                ]
-            ],
-            'id_pasien' => [
-                'rules'  => 'required',
-                'errors' => ['required' => 'Pasien harus dipilih.']
-            ]
-        ])) {
-            return redirect()->to('/pendaftaran/create')->withInput();
+        if (!session()->has('temp_kunjungan')) {
+            return redirect()->to('/pendaftaran/create');
         }
 
-        // Simpan data pendaftaran
-        $this->pendaftaranModel->save([
-            'no_pendaftaran' => $this->request->getPost('no_pendaftaran'),
-            'id_pasien'      => $this->request->getPost('id_pasien'),
-            // tgl_daftar tidak perlu diinput manual, biarkan MySQL mengisi dengan CURRENT_TIMESTAMP
-            'status'         => 'Antri' // Secara default, saat baru daftar statusnya 'Antri'
-        ]);
+        $tempData = session()->get('temp_kunjungan');
+        $pendaftaranModel = new PendaftaranModel();
 
-        session()->setFlashdata('pesan', 'Pendaftaran pasien berhasil. Pasien masuk ke daftar antrean.');
-        return redirect()->to('/pendaftaran');
+        $saveData = [
+            'id_pasien'    => $tempData['id_pasien'],
+            'id_poli'      => $tempData['id_poli'],
+            'keluhan_awal' => $tempData['keluhan_awal'],
+            'waktu_daftar' => $tempData['tanggal'],
+            'status'       => 'Antri' 
+        ];
+
+        $pendaftaranModel->save($saveData);
+        session()->remove('temp_kunjungan');
+
+        return redirect()->to('/pendaftaran')->with('pesan', 'Pendaftaran kunjungan berhasil disimpan!');
+    }
+
+    // Tambahkan fungsi cancel() ini
+    public function cancel()
+    {
+        session()->remove('temp_kunjungan');
+        return redirect()->to('/pendaftaran/create')->with('pesan', 'Pendaftaran kunjungan dibatalkan.');
     }
 
     // ==========================================
@@ -147,4 +195,6 @@ class PendaftaranController extends BaseController
         session()->setFlashdata('pesan', 'Data pendaftaran berhasil dihapus.');
         return redirect()->to('/pendaftaran');
     }
+
+    
 }

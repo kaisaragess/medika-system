@@ -64,11 +64,14 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 
     // Rute untuk Fitur Transaksi Pendaftaran
     $routes->get('/pendaftaran', 'PendaftaranController::index');                 
-    $routes->get('/pendaftaran/create', 'PendaftaranController::create');         
-    $routes->post('/pendaftaran/store', 'PendaftaranController::store');          
+    $routes->get('/pendaftaran/create', 'PendaftaranController::create');                 
     $routes->get('/pendaftaran/edit/(:num)', 'PendaftaranController::edit/$1');   
     $routes->post('/pendaftaran/update/(:num)', 'PendaftaranController::update/$1'); 
     $routes->get('/pendaftaran/delete/(:num)', 'PendaftaranController::delete/$1');
+    $routes->post('/pendaftaran/review', 'PendaftaranController::review'); // Proses form
+    $routes->get('/pendaftaran/confirm', 'PendaftaranController::confirm'); // Halaman review
+    $routes->post('/pendaftaran/store', 'PendaftaranController::store'); // Simpan permanen
+    $routes->get('/pendaftaran/cancel', 'PendaftaranController::cancel'); // Batalkan
 
     // Rute untuk Fitur Rekam Medis
     $routes->get('/rekam_medis', 'RekamMedisController::index');                 
