@@ -50,9 +50,13 @@ class PoliklinikController extends BaseController
                 'rules'  => 'required',
                 'errors' => ['required' => 'Nama poliklinik harus diisi.']
             ],
-            'ruangan' => [
+            'daftar_spesialisasi' => [
                 'rules'  => 'required',
-                'errors' => ['required' => 'Nama/Nomor ruangan harus diisi.']
+                'errors' => ['required' => 'Daftar spesialisasi harus diisi.']
+            ],
+            'kode_poli' => [
+                'rules'  => 'required',
+                'errors' => ['required' => 'Kode poliklinik harus diisi.']
             ]
         ])) {
             return redirect()->to('/poliklinik/create')->withInput();
@@ -60,7 +64,8 @@ class PoliklinikController extends BaseController
 
         $this->poliklinikModel->save([
             'nama_poli' => $this->request->getPost('nama_poli'),
-            'ruangan'   => $this->request->getPost('ruangan')
+            'daftar_spesialisasi' => $this->request->getPost('daftar_spesialisasi'),
+            'kode_poli' => $this->request->getPost('kode_poli')
         ]);
 
         session()->setFlashdata('pesan', 'Data poliklinik berhasil ditambahkan.');
@@ -95,9 +100,13 @@ class PoliklinikController extends BaseController
                 'rules'  => 'required',
                 'errors' => ['required' => 'Nama poliklinik harus diisi.']
             ],
-            'ruangan' => [
+            'daftar_spesialisasi' => [
                 'rules'  => 'required',
-                'errors' => ['required' => 'Nama/Nomor ruangan harus diisi.']
+                'errors' => ['required' => 'Daftar spesialisasi harus diisi.']
+            ],
+            'kode_poli' => [
+                'rules'  => 'required',
+                'errors' => ['required' => 'Kode poliklinik harus diisi.']
             ]
         ])) {
             return redirect()->to('/poliklinik/edit/' . $id)->withInput();
@@ -106,7 +115,8 @@ class PoliklinikController extends BaseController
         $this->poliklinikModel->save([
             'id'        => $id,
             'nama_poli' => $this->request->getPost('nama_poli'),
-            'ruangan'   => $this->request->getPost('ruangan')
+            'daftar_spesialisasi' => $this->request->getPost('daftar_spesialisasi'),
+            'kode_poli'   => $this->request->getPost('kode_poli')
         ]);
 
         session()->setFlashdata('pesan', 'Data poliklinik berhasil diperbarui.');
