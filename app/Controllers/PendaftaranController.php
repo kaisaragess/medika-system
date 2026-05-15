@@ -115,18 +115,25 @@ class PendaftaranController extends BaseController
         $tempData = session()->get('temp_kunjungan');
         $pendaftaranModel = new PendaftaranModel();
 
+        // 1. Membuat Kode Pendaftaran Otomatis (Format: REG-YYYYMMDD-XXXX)
+        $tanggalHariIni = date('Ymd');
+        $randomNumber = rand(1000, 9999);
+        $noPendaftaranBaru = 'REG-' . $tanggalHariIni . '-' . $randomNumber;
+
+        // 2. Data yang akan masuk ke Database
         $saveData = [
-            'id_pasien'    => $tempData['id_pasien'],
-            'id_poli'      => $tempData['id_poli'],
-            'keluhan_awal' => $tempData['keluhan_awal'],
-            'waktu_daftar' => $tempData['tanggal'],
-            'status'       => 'Antri' 
+            'no_pendaftaran' => $noPendaftaranBaru, // Menggunakan kode unik
+            'id_pasien'      => $tempData['id_pasien'],
+            'id_poli'        => $tempData['id_poli'],
+            'keluhan_awal'   => $tempData['keluhan_awal'],
+            'tgl_daftar'     => $tempData['tanggal'], // Menggunakan tgl_daftar
+            'status'         => 'Antri' 
         ];
 
         $pendaftaranModel->save($saveData);
         session()->remove('temp_kunjungan');
 
-        return redirect()->to('/pendaftaran')->with('pesan', 'Pendaftaran kunjungan berhasil disimpan!');
+        return redirect()->to('/pendaftaran')->with('pesan', 'Pendaftaran dengan No: ' . $noPendaftaranBaru . ' berhasil disimpan!');
     }
 
     // Tambahkan fungsi cancel() ini
@@ -158,29 +165,23 @@ class PendaftaranController extends BaseController
     // ==========================================
     // 5. UPDATE: Menyimpan Perubahan Pendaftaran
     // ==========================================
+    // Fungsi untuk memproses data dari form Edit
     public function update($id)
     {
-        if (!$this->validate([
-            'id_pasien' => [
-                'rules'  => 'required',
-                'errors' => ['required' => 'Pasien harus dipilih.']
-            ],
-            'status' => [
-                'rules'  => 'required',
-                'errors' => ['required' => 'Status pendaftaran harus dipilih.']
-            ]
-        ])) {
-            return redirect()->to('/pendaftaran/edit/' . $id)->withInput();
-        }
+        $pendaftaranModel = new \App\Models\PendaftaranModel();
 
-        $this->pendaftaranModel->save([
-            'id'        => $id,
-            'id_pasien' => $this->request->getPost('id_pasien'),
-            'status'    => $this->request->getPost('status') // Mengubah status (misal: dari Antri -> Diperiksa -> Selesai)
-        ]);
+        // Kita hanya mengambil data yang memang boleh diubah oleh petugas
+        // (Status dan Keluhan Awal)
+        $data = [
+            'status'       => $this->request->getPost('status'),
+            'keluhan_awal' => $this->request->getPost('keluhan_awal')
+        ];
 
-        session()->setFlashdata('pesan', 'Status pendaftaran berhasil diperbarui.');
-        return redirect()->to('/pendaftaran');
+        // Lakukan update ke database berdasarkan ID
+        $pendaftaranModel->update($id, $data);
+
+        // Kembalikan ke halaman daftar antrean dengan pesan sukses
+        return redirect()->to('/pendaftaran')->with('pesan', 'Data kunjungan berhasil diperbarui!');
     }
 
     // ==========================================

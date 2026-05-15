@@ -12,7 +12,7 @@ class PendaftaranModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['no_pendaftaran', 'id_pasien', 'tgl_daftar', 'status'];
+    protected $allowedFields = ['no_pendaftaran', 'id_pasien', 'id_poli', 'keluhan_awal', 'tgl_daftar', 'status'];
 
     // Relasi untuk menarik data pasien sekaligus (Opsional tapi sangat berguna)
     public function getPendaftaranWithPasien($id_pendaftaran)

@@ -5,49 +5,34 @@
     <div class="col-md-8">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-warning text-dark py-3">
-                <h5 class="fw-bold mb-0">Edit Data Kunjungan Pasien</h5>
+                <h5 class="fw-bold mb-0">Edit Status Kunjungan Pasien</h5>
             </div>
             <div class="card-body p-4">
                 <form action="/pendaftaran/update/<?= $pendaftaran['id']; ?>" method="post">
                     <?= csrf_field(); ?>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted small">Waktu Pendaftaran</label>
-                            <input type="text" class="form-control bg-light" value="<?= $pendaftaran['waktu_daftar']; ?>" readonly>
+                    <div class="row mb-4">
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold text-muted small">No. Pendaftaran</label>
+                            <input type="text" class="form-control bg-light fw-bold text-primary" value="<?= $pendaftaran['no_pendaftaran']; ?>" readonly>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted small">Status Kunjungan</label>
-                            <select class="form-select border-warning" name="status">
-                                <option value="Antri" <?= ($pendaftaran['status'] == 'Antri') ? 'selected' : ''; ?>>Sedang Antri</option>
-                                <option value="Diperiksa" <?= ($pendaftaran['status'] == 'Diperiksa') ? 'selected' : ''; ?>>Diperiksa Dokter</option>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-muted small">Tanggal & Waktu</label>
+                            <input type="text" class="form-control bg-light" value="<?= $pendaftaran['tgl_daftar']; ?>" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-muted small">Ubah Status</label>
+                            <select class="form-select border-warning fw-bold" name="status">
+                                <option value="Antri" <?= ($pendaftaran['status'] == 'Antri') ? 'selected' : ''; ?>>Antri</option>
+                                <option value="Diperiksa" <?= ($pendaftaran['status'] == 'Diperiksa') ? 'selected' : ''; ?>>Diperiksa</option>
                                 <option value="Selesai" <?= ($pendaftaran['status'] == 'Selesai') ? 'selected' : ''; ?>>Selesai</option>
-                                <option value="Batal" <?= ($pendaftaran['status'] == 'Batal') ? 'selected' : ''; ?>>Dibatalkan</option>
+                                <option value="Batal" <?= ($pendaftaran['status'] == 'Batal') ? 'selected' : ''; ?>>Batal</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Pasien</label>
-                        <select class="form-select" name="id_pasien" required>
-                            <?php foreach ($pasien as $p) : ?>
-                                <option value="<?= $p['id']; ?>" <?= ($pendaftaran['id_pasien'] == $p['id']) ? 'selected' : ''; ?>>
-                                    <?= $p['nik']; ?> - <?= $p['nama']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tujuan Poliklinik</label>
-                        <select class="form-select" name="id_poli" required>
-                            <?php foreach ($poli as $pl) : ?>
-                                <option value="<?= $pl['id']; ?>" <?= ($pendaftaran['id_poli'] == $pl['id']) ? 'selected' : ''; ?>>
-                                    [<?= $pl['kode_poli']; ?>] <?= $pl['nama_poli']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                    <input type="hidden" name="id_pasien" value="<?= $pendaftaran['id_pasien']; ?>">
+                    <input type="hidden" name="id_poli" value="<?= $pendaftaran['id_poli']; ?>">
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">Keluhan Awal</label>
