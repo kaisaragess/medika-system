@@ -12,7 +12,7 @@ class PoliklinikModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-  protected $allowedFields    = ['nama_poli', 'daftar_spesialisasi', 'ruangan'];
+    protected $allowedFields    = ['nama_poli', 'daftar_spesialisasi', 'kode_poli'];
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
