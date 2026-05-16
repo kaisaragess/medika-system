@@ -17,7 +17,7 @@
                             <option value="">-- Cari Nama Pasien --</option>
                             <?php foreach($pendaftaran as $psn): ?>
                                 <option value="<?= $psn['id']; ?>" <?= old('id_pendaftaran') == $psn['id'] ? 'selected' : ''; ?>>
-                                    [<?= $psn['no_pendaftaran']; ?>] - <?= $psn['nama']; ?>
+                                    [<?= $psn['no_pendaftaran']; ?>] - <?= $psn['nama_pasien']; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -29,8 +29,7 @@
                             <label for="id_obat" class="form-label">Pilih Obat</label>
                             <select class="form-select <?= ($validation->hasError('id_obat')) ? 'is-invalid' : ''; ?>" id="id_obat" name="id_obat">
                                 <option value="">-- Pilih Obat dari Inventori --</option>
-                                <?php foreach($obat as $obt): ?>
-                                    <!-- Menampilkan stok agar apoteker tahu -->
+                                <?php foreach($daftar_obat as $obt): ?>                                    <!-- Menampilkan stok agar apoteker tahu -->
                                     <option value="<?= $obt['id']; ?>" <?= old('id_obat') == $obt['id'] ? 'selected' : ''; ?>>
                                         <?= $obt['nama_obat']; ?> (Sisa Stok: <?= $obt['qty']; ?>) - Rp <?= number_format($obt['harga'], 0, ',', '.'); ?>
                                     </option>

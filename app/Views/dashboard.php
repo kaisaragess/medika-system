@@ -119,7 +119,7 @@
                         <a href="/rekam_medis/create" class="btn btn-outline-success w-100 rounded-3 py-2 fw-bold"><i class="bi bi-clipboard-check"></i> Rekam Medis</a>
                     </div>
                     <div class="col-sm-4 mb-2">
-                        <a href="/pembayaran/create" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-bold"><i class="bi bi-receipt"></i> Kasir</a>
+                        <a href="/transaksi_layanan/create" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-bold"><i class="bi bi-receipt"></i> Kasir</a>
                     </div>
                 </div>
 

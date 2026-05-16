@@ -14,6 +14,17 @@ class TransaksiObatModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = ['id_pendaftaran', 'id_obat', 'qty', 'aturan_pakai', 'tagihan_obat'];
 
+    public function getTransaksiLengkap()
+    {
+        // Kita tambahkan obat.nama_obat dan obat.satuan di bagian select
+        return $this->select('transaksi_obat.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, obat.nama_obat, obat.satuan, ')
+                    ->join('pendaftaran', 'pendaftaran.id = transaksi_obat.id_pendaftaran')
+                    ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
+                    ->join('obat', 'obat.id = transaksi_obat.id_obat', 'left') // Tambahkan JOIN ke tabel obat
+                    ->orderBy('transaksi_obat.tgl_transaksi', 'DESC')
+                    ->findAll();
+    }
+
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 

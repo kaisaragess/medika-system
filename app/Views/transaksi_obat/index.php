@@ -49,7 +49,7 @@
                                     <td><?= $t['nama_obat']; ?></td>
                                     <td><?= $t['aturan_pakai']; ?></td>
                                     <td class="text-center"><?= $t['qty']; ?> <?= $t['satuan']; ?></td>
-                                    <td class="text-primary fw-bold">Rp <?= number_format($t['total_harga'], 0, ',', '.'); ?></td>
+                                    <td class="text-primary fw-bold">Rp <?= number_format($t['tagihan_obat'], 0, ',', '.'); ?></td>
                                     <td class="text-center">
                                         <a href="/transaksi_obat/edit/<?= $t['id']; ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
                                         <form action="/transaksi_obat/delete/<?= $t['id']; ?>" method="get" class="d-inline">

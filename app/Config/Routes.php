@@ -9,10 +9,7 @@ use CodeIgniter\Router\RouteCollection;
 // Semua rute ini HANYA bisa diakses jika sudah login
 $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Home::index');
-
-
-    $routes->get('/', 'Home::index');
-
+    $routes->get('/dashboard', 'Home::index');
 
     // Rute untuk mengelola Pasien
     $routes->get('/pasien', 'PasienController::index');                 // Halaman daftar pasien
@@ -89,9 +86,26 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->post('/transaksi_layanan/update/(:num)', 'TransaksiLayananController::update/$1'); 
     $routes->get('/transaksi_layanan/delete/(:num)', 'TransaksiLayananController::delete/$1');
 
+    //Rute untuk transaksi obat
+    $routes->get('/transaksi_obat', 'TransaksiObatController::index');
+    $routes->get('/transaksi_obat/create', 'TransaksiObatController::create');
+    $routes->post('/transaksi_obat/store', 'TransaksiObatController::store');
+    $routes->get('/transaksi_obat/edit/(:num)', 'TransaksiObatController::edit/$1');
+    $routes->post('/transaksi_obat/update/(:num)', 'TransaksiObatController::update/$1');
+    $routes->get('/transaksi_obat/delete/(:num)', 'TransaksiObatController::delete/$1');
 
+    //Rute untuk transaksi kamar
+    $routes->get('/transaksi_kamar', 'TransaksiKamarController::index');
+    $routes->get('/transaksi_kamar/create', 'TransaksiKamarController::create');
+    $routes->post('/transaksi_kamar/store', 'TransaksiKamarController::store');
 
-$routes->post('/pegawai/approve/(:num)', 'PegawaiController::approve/$1');
+    $routes->post('/transaksi_kamar/checkout/(:num)', 'TransaksiKamarController::checkout/$1');
+
+    // Rute untuk fitur Edit yang kita buat sebelumnya:
+    $routes->get('/transaksi_kamar/edit/(:num)', 'TransaksiKamarController::edit/$1');
+    $routes->post('/transaksi_kamar/update/(:num)', 'TransaksiKamarController::update/$1');
+
+    $routes->post('/pegawai/approve/(:num)', 'PegawaiController::approve/$1');
 });
 
     // Rute Publik (Tidak kena filter)
