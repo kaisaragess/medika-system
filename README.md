@@ -6,11 +6,11 @@ Berikut adalah langkah-langkah step-by-step untuk mem-fork dan menjalankannya di
 ## 🛠️ Persiapan Awal (Prerequisites)
 Sebelum mulai, pastikan di laptop/PC kamu sudah ter-install:
 
-XAMPP / Laragon (Pastikan versi PHP minimal 8.1, direkomendasikan PHP 8.2).
+- XAMPP / Laragon (Pastikan versi PHP minimal 8.1, direkomendasikan PHP 8.2).
 
-Composer (Untuk mengelola dependency PHP).
+- Composer (Untuk mengelola dependency PHP).
 
-Git (Untuk mempermudah proses cloning repositori).
+- Git (Untuk mempermudah proses cloning repositori).
 
 ## Langkah 1: Fork Repository Ini
 Forking berarti kamu membuat salinan (copy) dari project ini ke dalam akun GitHub-mu sendiri agar kamu bisa bereksperimen dengan bebas.
@@ -31,12 +31,15 @@ Klik kanan di dalam folder tersebut, lalu pilih "Open Git Bash here" atau buka T
 Ketikkan perintah berikut (jangan lupa ganti USERNAME_KAMU dengan username GitHub-mu):
 
 Bash
+
 `git clone https://github.com/USERNAME_KAMU/medika_system.git`
+
 Masuk ke dalam folder project-nya:
 
 Bash
 `cd medika_system`
-Langkah 3: Install Dependencies (Composer)
+
+# Langkah 3: Install Dependencies (Composer)
 Karena CodeIgniter 4 menggunakan beberapa pustaka pihak ketiga, kita harus mengunduhnya dulu melalui Composer. Di dalam terminal yang sama, jalankan:
 
 Bash
