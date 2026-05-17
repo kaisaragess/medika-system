@@ -69,8 +69,9 @@ database.default.database = medika_system
 database.default.username = root
 database.default.password = 
 database.default.DBDriver = MySQLi
-(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
 ```
+(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
+
 
 ## Langkah 5: Buat Database
 Nyalakan Apache dan MySQL di XAMPP.
@@ -98,6 +99,6 @@ Buka browser kamu dan ketikkan alamat: http://localhost:8080.
 Selamat! Aplikasi MedikaSistem sekarang sudah berjalan sempurna di komputermu. Silakan telusuri kodenya, pelajari alur transaksinya, dan selamat berkreasi!
 
 # Catatan!
-**Kamu harus ada akun sebagai admin dengan cara manual masukan di phpmyadmin**
+**Kamu harus ada akun sebagai admin dengan cara manual input query atau GUI di phpmyadmin**
 # 💡 Ingin Berkontribusi?
 Jika kamu menambahkan fitur baru, memperbaiki bug, atau merapikan UI, jangan ragu untuk melakukan Pull Request kembali ke repository utama ini! Mari belajar dan berkembang bersama.
