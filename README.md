@@ -30,20 +30,25 @@ Klik kanan di dalam folder tersebut, lalu pilih "Open Git Bash here" atau buka T
 
 Ketikkan perintah berikut (jangan lupa ganti USERNAME_KAMU dengan username GitHub-mu):
 
+```
 Bash
-
-`git clone https://github.com/USERNAME_KAMU/medika_system.git`
+git clone https://github.com/USERNAME_KAMU/medika_system.git
+```
 
 Masuk ke dalam folder project-nya:
 
+```
 Bash
-`cd medika_system`
+cd medika_system
+```
 
 # Langkah 3: Install Dependencies (Composer)
 Karena CodeIgniter 4 menggunakan beberapa pustaka pihak ketiga, kita harus mengunduhnya dulu melalui Composer. Di dalam terminal yang sama, jalankan:
 
+```
 Bash
-`composer install`
+composer install
+```
 Tunggu hingga proses unduhan selesai.
 
 ## Langkah 4: Konfigurasi Environment (.env)
@@ -55,7 +60,8 @@ Cari file bernama env (tanpa titik di depannya), lalu rename atau ubah namanya m
 
 Buka file .env tersebut, cari baris kode ini, dan hilangkan tanda pagar (#) di depannya agar aktif:
 
-Ini, TOML
+Ini, 
+```
 CI_ENVIRONMENT = development
 
 database.default.hostname = localhost
@@ -63,7 +69,8 @@ database.default.database = medika_system
 database.default.username = root
 database.default.password = 
 database.default.DBDriver = MySQLi
-(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = ).
+(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
+```
 
 ## Langkah 5: Buat Database
 Nyalakan Apache dan MySQL di XAMPP.
@@ -82,8 +89,10 @@ Langkah 6: Jalankan Aplikasi! 🎉
 Semuanya sudah siap! Sekarang kita tinggal menyalakan server lokal bawaan CodeIgniter.
 Di terminal/CMD, ketik:
 
+```
 Bash
-`'php spark serve`
+php spark serve
+```
 Buka browser kamu dan ketikkan alamat: http://localhost:8080.
 
 Selamat! Aplikasi MedikaSistem sekarang sudah berjalan sempurna di komputermu. Silakan telusuri kodenya, pelajari alur transaksinya, dan selamat berkreasi!
