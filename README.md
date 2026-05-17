@@ -1,4 +1,4 @@
-#🚀 Tutorial: Cara Fork & Menjalankan MedikaSistem di Localhost
+# 🚀 Tutorial: Cara Fork & Menjalankan MedikaSistem di Localhost
 Halo semuanya! 👋 Jika kalian tertarik untuk mempelajari struktur kode aplikasi manajemen klinik/rumah sakit ini, atau bahkan ingin ikut berkontribusi mengembangkannya, kalian bisa menjalankan project MedikaSistem ini di laptop atau PC kalian masing-masing.
 
 Berikut adalah langkah-langkah step-by-step untuk mem-fork dan menjalankannya di localhost!
@@ -85,7 +85,7 @@ Buka browser kamu dan ketikkan alamat: http://localhost:8080.
 
 Selamat! Aplikasi MedikaSistem sekarang sudah berjalan sempurna di komputermu. Silakan telusuri kodenya, pelajari alur transaksinya, dan selamat berkreasi!
 
-#Catatan!
+# Catatan!
 **Kamu harus ada akun sebagai admin dengan cara manual masukan di phpmyadmin**
-#💡 Ingin Berkontribusi?
+# 💡 Ingin Berkontribusi?
 Jika kamu menambahkan fitur baru, memperbaiki bug, atau merapikan UI, jangan ragu untuk melakukan Pull Request kembali ke repository utama ini! Mari belajar dan berkembang bersama.
