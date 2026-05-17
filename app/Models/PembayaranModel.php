@@ -12,7 +12,7 @@ class PembayaranModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_pendaftaran', 'id_pegawai', 'tgl_bayar', 'metode_bayar', 'total_bayar', 'status_pembayaran'];
+    protected $allowedFields    = ['id_pendaftaran', 'no_tagihan', 'id_pegawai', 'tgl_bayar', 'metode_bayar', 'total_bayar', 'status_pembayaran'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

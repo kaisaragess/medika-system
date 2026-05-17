@@ -40,11 +40,20 @@
                 <th class="text-right">Harga</th>
             </tr>
             
-            <!-- Jika di Controller kamu melempar detail layanan, tampilkan di sini -->
-            <tr>
-                <td>Total Tagihan Layanan & Obat</td>
-                <td class="text-right">Rp <?= number_format($pembayaran['total_bayar'], 0, ',', '.'); ?></td>
-            </tr>
+            <!-- Looping detail layanan -->
+            <?php if(!empty($detail)): ?>
+                <?php foreach($detail as $d): ?>
+                <tr>
+                    <td><?= $d['nama_item']; ?></td>
+                    <td class="text-right">Rp <?= number_format($d['subtotal'], 0, ',', '.'); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td>Total Tagihan Layanan & Obat</td>
+                    <td class="text-right">Rp <?= number_format($pembayaran['total_bayar'], 0, ',', '.'); ?></td>
+                </tr>
+            <?php endif; ?>
 
             <tr class="border-top">
                 <th>GRAND TOTAL</th>

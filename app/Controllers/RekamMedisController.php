@@ -88,9 +88,25 @@ class RekamMedisController extends BaseController
             'keluhan' => [
                 'rules'  => 'required',
                 'errors' => ['required' => 'Keluhan pasien harus diisi.']
+            ],
+            'file' => [
+                'rules'  => 'max_size[file,5120]|ext_in[file,pdf]',
+                'errors' => [
+                    'max_size' => 'Ukuran file PDF maksimal 5MB.',
+                    'ext_in'   => 'Format file harus berupa PDF.'
+                ]
             ]
         ])) {
             return redirect()->to('/rekam_medis/create')->withInput();
+        }
+
+        // Upload File Logic
+        $filePdf = $this->request->getFile('file');
+        $namaFile = null;
+
+        if ($filePdf && $filePdf->isValid() && !$filePdf->hasMoved()) {
+            $namaFile = $filePdf->getRandomName();
+            $filePdf->move(FCPATH . 'uploads/rekam_medis', $namaFile);
         }
 
         // Simpan ke database
@@ -103,7 +119,7 @@ class RekamMedisController extends BaseController
             'diagnosa'        => $this->request->getPost('diagnosa'),
             'tindakan_medis'  => $this->request->getPost('tindakan_medis'),
             'tekanan_darah'   => $this->request->getPost('tekanan_darah'),
-            'file'            => $this->request->getPost('file') // Untuk sementara berupa teks link/nama file. Jika butuh upload file asli, logikanya perlu ditambah nanti.
+            'file'            => $namaFile
         ]);
 
         // Opsional & Keren: Otomatis ubah status pendaftaran menjadi 'Selesai' setelah rekam medis diisi
@@ -148,9 +164,31 @@ class RekamMedisController extends BaseController
             'keluhan' => [
                 'rules'  => 'required',
                 'errors' => ['required' => 'Keluhan pasien harus diisi.']
+            ],
+            'file' => [
+                'rules'  => 'max_size[file,5120]|ext_in[file,pdf]',
+                'errors' => [
+                    'max_size' => 'Ukuran file PDF maksimal 5MB.',
+                    'ext_in'   => 'Format file harus berupa PDF.'
+                ]
             ]
         ])) {
             return redirect()->to('/rekam_medis/edit/' . $id)->withInput();
+        }
+
+        $rekamMedisLama = $this->rekamMedisModel->find($id);
+        $filePdf = $this->request->getFile('file');
+        $namaFile = $rekamMedisLama['file']; // default tetap pakai file lama
+
+        // Jika ada file baru yang diupload
+        if ($filePdf && $filePdf->isValid() && !$filePdf->hasMoved()) {
+            $namaFile = $filePdf->getRandomName();
+            $filePdf->move(FCPATH . 'uploads/rekam_medis', $namaFile);
+            
+            // Hapus file lama jika ada
+            if ($rekamMedisLama['file'] && file_exists(FCPATH . 'uploads/rekam_medis/' . $rekamMedisLama['file'])) {
+                unlink(FCPATH . 'uploads/rekam_medis/' . $rekamMedisLama['file']);
+            }
         }
 
         $this->rekamMedisModel->save([
@@ -162,7 +200,7 @@ class RekamMedisController extends BaseController
             'diagnosa'        => $this->request->getPost('diagnosa'),
             'tindakan_medis'  => $this->request->getPost('tindakan_medis'),
             'tekanan_darah'   => $this->request->getPost('tekanan_darah'),
-            'file'            => $this->request->getPost('file')
+            'file'            => $namaFile
         ]);
 
         session()->setFlashdata('pesan', 'Rekam medis berhasil diperbarui.');
@@ -174,6 +212,13 @@ class RekamMedisController extends BaseController
     // ==========================================
     public function delete($id)
     {
+        $rekamMedis = $this->rekamMedisModel->find($id);
+        
+        // Hapus file fisik jika ada
+        if ($rekamMedis && $rekamMedis['file'] && file_exists(FCPATH . 'uploads/rekam_medis/' . $rekamMedis['file'])) {
+            unlink(FCPATH . 'uploads/rekam_medis/' . $rekamMedis['file']);
+        }
+
         $this->rekamMedisModel->delete($id);
         
         session()->setFlashdata('pesan', 'Rekam medis berhasil dihapus.');

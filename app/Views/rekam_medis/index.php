@@ -41,7 +41,10 @@
                                     <td><?= $rm['nama_dokter']; ?></td>
                                     <td>
                                         <strong>Keluhan:</strong> <?= $rm['keluhan']; ?><br>
-                                        <strong>Diagnosa:</strong> <span class="text-danger"><?= $rm['diagnosa'] ? $rm['diagnosa'] : '-'; ?></span>
+                                        <strong>Diagnosa:</strong> <span class="text-danger"><?= $rm['diagnosa'] ? $rm['diagnosa'] : '-'; ?></span><br>
+                                        <?php if($rm['file']): ?>
+                                            <a href="<?= base_url('uploads/rekam_medis/' . $rm['file']); ?>" target="_blank" class="badge bg-info text-decoration-none mt-1"><i class="bi bi-file-pdf"></i> Lihat File PDF</a>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="text-center">
                                         <a href="/rekam_medis/edit/<?= $rm['id']; ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>

@@ -45,10 +45,21 @@ class PendaftaranController extends BaseController
         $pasienModel = new PasienModel();
         $poliModel = new PoliklinikModel();
 
+        $semuaPoli = $poliModel->findAll();
+        $poliUnik = [];
+        $namaPoliTerdaftar = [];
+
+        foreach ($semuaPoli as $pl) {
+            if (!in_array($pl['nama_poli'], $namaPoliTerdaftar)) {
+                $poliUnik[] = $pl;
+                $namaPoliTerdaftar[] = $pl['nama_poli'];
+            }
+        }
+
         $data = [
             'title'  => 'Pendaftaran Kunjungan Baru',
             'pasien' => $pasienModel->findAll(),
-            'poli'   => $poliModel->findAll(),
+            'poli'   => $poliUnik,
             'temp_data' => session()->get('temp_kunjungan') 
         ];
 

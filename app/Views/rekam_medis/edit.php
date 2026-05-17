@@ -8,7 +8,7 @@
                 <h5 class="card-title mb-0">Ubah Data Rekam Medis</h5>
             </div>
             <div class="card-body">
-                <form action="/rekam_medis/update/<?= $rekam_medis['id']; ?>" method="post">
+                <form action="/rekam_medis/update/<?= $rekam_medis['id']; ?>" method="post" enctype="multipart/form-data">
                     <?= csrf_field(); ?>
 
                     <div class="row mb-3">
@@ -68,6 +68,22 @@
                             <label for="tekanan_darah" class="form-label">Tekanan Darah (Tensi)</label>
                             <input type="text" class="form-control" id="tekanan_darah" name="tekanan_darah" value="<?= (old('tekanan_darah')) ? old('tekanan_darah') : $rekam_medis['tekanan_darah']; ?>">
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Dokumen PDF Terlampir</label>
+                        <?php if($rekam_medis['file']): ?>
+                            <div class="mb-2">
+                                <a href="<?= base_url('uploads/rekam_medis/' . $rekam_medis['file']); ?>" target="_blank" class="btn btn-sm btn-info text-white"><i class="bi bi-file-earmark-pdf"></i> Lihat File Saat Ini</a>
+                            </div>
+                        <?php else: ?>
+                            <div class="mb-2 text-muted fst-italic">Belum ada file dokumen yang diunggah.</div>
+                        <?php endif; ?>
+                        
+                        <label for="file" class="form-label mt-2">Ganti/Unggah Dokumen PDF (Opsional)</label>
+                        <input type="file" class="form-control <?= ($validation->hasError('file')) ? 'is-invalid' : ''; ?>" id="file" name="file" accept="application/pdf">
+                        <div class="invalid-feedback"><?= $validation->getError('file'); ?></div>
+                        <small class="text-muted">Maksimal ukuran file 5 MB. Format: .pdf. Memilih file baru akan menimpa file lama.</small>
                     </div>
 
                     <div class="d-flex justify-content-between">

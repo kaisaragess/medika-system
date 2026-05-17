@@ -6,22 +6,74 @@
     <title>Registrasi Pegawai | MedikaSistem</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .register-card { border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); max-width: 600px; width: 100%; }
-        .form-label { font-size: 0.85rem; font-weight: 600; }
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9; 
+            padding: 40px 20px;
+        }
+        .register-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .register-card { 
+            border-radius: 16px; 
+            border: none; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); 
+            background: #fff;
+            padding: 40px;
+        }
+        .form-label { font-size: 0.85rem; font-weight: 600; color: #495057; }
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
+            border-color: #198754;
+        }
+        .btn-success {
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3);
+        }
+        .icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background-color: #198754;
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div class="card register-card">
-    <div class="card-body p-4 p-md-5">
-        <div class="text-center mb-4">
-            <div class="bg-success text-white rounded-3 d-inline-flex p-2 mb-2">
-                <i class="bi bi-person-badge fs-3"></i>
+<div class="container register-container">
+    <div class="register-card">
+        <div class="mb-4">
+            <a href="/login" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left"></i> Kembali ke Login</a>
+        </div>
+        
+        <div class="text-center mb-5">
+            <div class="icon-box shadow-sm">
+                <i class="bi bi-person-badge fs-2"></i>
             </div>
-            <h4 class="fw-bold">Pendaftaran Akun Pegawai</h4>
-            <p class="text-muted small">Lengkapi data untuk mengajukan akses sistem</p>
+            <h3 class="fw-bold text-success mb-1">Pendaftaran Akun Pegawai</h3>
+            <p class="text-muted">Lengkapi data untuk mengajukan akses sistem</p>
         </div>
 
         <?php if (session()->getFlashdata('error')) : ?>
@@ -106,9 +158,8 @@
                 </div>
             </div>
 
-            <div class="d-grid gap-2">
+            <div class="d-grid mt-5">
                 <button type="submit" class="btn btn-success fw-bold">Daftar Sekarang</button>
-                <a href="/login" class="btn btn-light border text-muted">Kembali ke Login</a>
             </div>
         </form>
     </div>

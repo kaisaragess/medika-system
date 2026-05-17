@@ -8,7 +8,7 @@
                 <h5 class="card-title mb-0">Isi Rekam Medis Pasien</h5>
             </div>
             <div class="card-body">
-                <form action="/rekam_medis/store" method="post">
+                <form action="/rekam_medis/store" method="post" enctype="multipart/form-data">
                     <?= csrf_field(); ?>
 
                     <div class="row mb-3">
@@ -71,6 +71,13 @@
                             <label for="tekanan_darah" class="form-label">Tekanan Darah (Tensi)</label>
                             <input type="text" class="form-control" id="tekanan_darah" name="tekanan_darah" value="<?= old('tekanan_darah'); ?>" placeholder="Misal: 120/80 mmHg">
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="file" class="form-label">Upload Dokumen PDF (Opsional)</label>
+                        <input type="file" class="form-control <?= ($validation->hasError('file')) ? 'is-invalid' : ''; ?>" id="file" name="file" accept="application/pdf">
+                        <div class="invalid-feedback"><?= $validation->getError('file'); ?></div>
+                        <small class="text-muted">Maksimal ukuran file 5 MB. Format: .pdf</small>
                     </div>
 
                     <div class="d-flex justify-content-between">

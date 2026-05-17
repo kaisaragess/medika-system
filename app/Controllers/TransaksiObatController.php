@@ -48,31 +48,121 @@ class TransaksiObatController extends BaseController
     // Memproses penyimpanan transaksi obat ke database (Store)
     public function store()
     {
-        // Membuat nomor transaksi apotek otomatis (Format: NOTA-YYYYMMDD-XXXX)
-        $noTransaksi = 'NOTA-' . date('Ymd') . '-' . rand(1000, 9999);
+        // Validasi input
+        if (!$this->validate([
+            'id_pendaftaran' => 'required',
+            'id_obat'        => 'required',
+            'qty'            => 'required|integer|greater_than[0]',
+            'aturan_pakai'   => 'required'
+        ])) {
+            return redirect()->to('/transaksi_obat/create')->withInput();
+        }
+
+        // Ambil data obat untuk menghitung harga
+        $obatModel = new \App\Models\ObatModel();
+        $idObat = $this->request->getPost('id_obat');
+        $qty = $this->request->getPost('qty');
+        $obat = $obatModel->find($idObat);
+        $tagihan_obat = $obat['harga'] * $qty;
 
         $data = [
-            'no_transaksi'      => $noTransaksi,
-            'id_pendaftaran'    => $this->request->getPost('id_pendaftaran'),
-            'tgl_transaksi'     => date('Y-m-d H:i:s'),
-            'total_biaya'       => $this->request->getPost('total_biaya'),
-            'status_pembayaran' => $this->request->getPost('status_pembayaran') ?? 'Belum Lunas'
+            'id_pendaftaran' => $this->request->getPost('id_pendaftaran'),
+            'id_obat'        => $idObat,
+            'qty'            => $qty,
+            'aturan_pakai'   => $this->request->getPost('aturan_pakai'),
+            'tagihan_obat'   => $tagihan_obat
         ];
 
         $this->transaksiObatModel->save($data);
 
-        return redirect()->to('/transaksi_obat')->with('pesan', 'Transaksi obat ' . $noTransaksi . ' berhasil disimpan!');
+        // Opsional: kurangi stok obat (jika diperlukan)
+        $obatModel->update($idObat, ['qty' => $obat['qty'] - $qty]);
+
+        return redirect()->to('/transaksi_obat')->with('pesan', 'Transaksi obat berhasil ditambahkan ke tagihan pasien!');
     }
 
-    // Menampilkan detail item obat yang dibeli (Detail)
-    public function detail($id)
+    // Menampilkan Form Ubah Transaksi Obat (Edit)
+    public function edit($id)
     {
+        $obatModel = new \App\Models\ObatModel();
+
         $data = [
-            'title'     => 'Detail Transaksi Apotek',
-            'transaksi' => $this->transaksiObatModel->find($id)
-            // Jika Anda memiliki tabel detail_transaksi_obat, Anda bisa melakukan join di sini
+            'title'       => 'Ubah Penebusan Obat',
+            'validation'  => \Config\Services::validation(),
+            'transaksi'   => $this->transaksiObatModel->find($id),
+            'pendaftaran' => $this->pendaftaranModel->select('pendaftaran.*, pasien.nama as nama_pasien')
+                                                    ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
+                                                    ->findAll(),
+            'daftar_obat' => $obatModel->findAll() 
         ];
 
-        return view('transaksi_obat/detail', $data);
+        if (empty($data['transaksi'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data transaksi obat dengan ID ' . $id . ' tidak ditemukan.');
+        }
+
+        return view('transaksi_obat/edit', $data);
+    }
+
+    // Memproses perubahan transaksi obat (Update)
+    public function update($id)
+    {
+        // Validasi input
+        if (!$this->validate([
+            'id_pendaftaran' => 'required',
+            'id_obat'        => 'required',
+            'qty'            => 'required|integer|greater_than[0]',
+            'aturan_pakai'   => 'required'
+        ])) {
+            return redirect()->to('/transaksi_obat/edit/' . $id)->withInput();
+        }
+
+        // Ambil data obat untuk menghitung harga
+        $obatModel = new \App\Models\ObatModel();
+        $idObat = $this->request->getPost('id_obat');
+        $qtyBaru = $this->request->getPost('qty');
+        $obat = $obatModel->find($idObat);
+        $tagihan_obat = $obat['harga'] * $qtyBaru;
+
+        // Logika kembalikan stok lama, lalu kurangi stok baru
+        $transaksiLama = $this->transaksiObatModel->find($id);
+        if ($transaksiLama['id_obat'] == $idObat) {
+            $selisihQty = $qtyBaru - $transaksiLama['qty'];
+            $obatModel->update($idObat, ['qty' => $obat['qty'] - $selisihQty]);
+        } else {
+            // Jika ganti obat
+            $obatLama = $obatModel->find($transaksiLama['id_obat']);
+            $obatModel->update($transaksiLama['id_obat'], ['qty' => $obatLama['qty'] + $transaksiLama['qty']]);
+            $obatModel->update($idObat, ['qty' => $obat['qty'] - $qtyBaru]);
+        }
+
+        $data = [
+            'id'             => $id,
+            'id_pendaftaran' => $this->request->getPost('id_pendaftaran'),
+            'id_obat'        => $idObat,
+            'qty'            => $qtyBaru,
+            'aturan_pakai'   => $this->request->getPost('aturan_pakai'),
+            'tagihan_obat'   => $tagihan_obat
+        ];
+
+        $this->transaksiObatModel->save($data);
+
+        return redirect()->to('/transaksi_obat')->with('pesan', 'Transaksi obat berhasil diperbarui!');
+    }
+
+    // Menghapus Data Transaksi Obat (Delete)
+    public function delete($id)
+    {
+        $transaksiLama = $this->transaksiObatModel->find($id);
+        if ($transaksiLama) {
+            $obatModel = new \App\Models\ObatModel();
+            $obat = $obatModel->find($transaksiLama['id_obat']);
+            // Kembalikan stok
+            $obatModel->update($transaksiLama['id_obat'], ['qty' => $obat['qty'] + $transaksiLama['qty']]);
+            
+            $this->transaksiObatModel->delete($id);
+        }
+        
+        session()->setFlashdata('pesan', 'Data transaksi obat berhasil dihapus dari tagihan.');
+        return redirect()->to('/transaksi_obat');
     }
 }
