@@ -1,72 +1,91 @@
-# CodeIgniter 4 Application Starter
+#🚀 Tutorial: Cara Fork & Menjalankan MedikaSistem di Localhost
+Halo semuanya! 👋 Jika kalian tertarik untuk mempelajari struktur kode aplikasi manajemen klinik/rumah sakit ini, atau bahkan ingin ikut berkontribusi mengembangkannya, kalian bisa menjalankan project MedikaSistem ini di laptop atau PC kalian masing-masing.
 
-## What is CodeIgniter?
+Berikut adalah langkah-langkah step-by-step untuk mem-fork dan menjalankannya di localhost!
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## 🛠️ Persiapan Awal (Prerequisites)
+Sebelum mulai, pastikan di laptop/PC kamu sudah ter-install:
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+XAMPP / Laragon (Pastikan versi PHP minimal 8.1, direkomendasikan PHP 8.2).
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+Composer (Untuk mengelola dependency PHP).
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+Git (Untuk mempermudah proses cloning repositori).
 
-## Installation & updates
+## Langkah 1: Fork Repository Ini
+Forking berarti kamu membuat salinan (copy) dari project ini ke dalam akun GitHub-mu sendiri agar kamu bisa bereksperimen dengan bebas.
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+Scroll ke bagian paling atas halaman repository ini.
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+Di pojok kanan atas, klik tombol **"Fork"**.
 
-## Setup
+Ikuti instruksi dari GitHub untuk menyimpan repository ini ke akunmu.
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## Langkah 2: Clone ke Komputer Lokal
+Setelah berhasil di-fork, sekarang saatnya mengunduh kodenya ke komputermu.
 
-## Important Change with index.php
+Buka folder htdocs (jika pakai XAMPP) atau www (jika pakai Laragon).
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Klik kanan di dalam folder tersebut, lalu pilih "Open Git Bash here" atau buka Terminal/CMD.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+Ketikkan perintah berikut (jangan lupa ganti USERNAME_KAMU dengan username GitHub-mu):
 
-**Please** read the user guide for a better explanation of how CI4 works!
+Bash
+`git clone https://github.com/USERNAME_KAMU/medika_system.git`
+Masuk ke dalam folder project-nya:
 
-## Repository Management
+Bash
+`cd medika_system`
+Langkah 3: Install Dependencies (Composer)
+Karena CodeIgniter 4 menggunakan beberapa pustaka pihak ketiga, kita harus mengunduhnya dulu melalui Composer. Di dalam terminal yang sama, jalankan:
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+Bash
+`composer install`
+Tunggu hingga proses unduhan selesai.
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+## Langkah 4: Konfigurasi Environment (.env)
+Kita perlu memberi tahu aplikasi ini cara terhubung ke database di laptopmu.
 
-## Server Requirements
+Buka folder medika_system menggunakan code editor (seperti VS Code).
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+Cari file bernama env (tanpa titik di depannya), lalu rename atau ubah namanya menjadi .env (tambahkan titik di depan).
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+Buka file .env tersebut, cari baris kode ini, dan hilangkan tanda pagar (#) di depannya agar aktif:
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+Ini, TOML
+CI_ENVIRONMENT = development
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+database.default.hostname = localhost
+database.default.database = medika_system
+database.default.username = root
+database.default.password = 
+database.default.DBDriver = MySQLi
+(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = ).
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## Langkah 5: Buat Database
+Nyalakan Apache dan MySQL di XAMPP.
 
-# medika-system
-Website Sistem Manajemen Rumah Sakit
+Buka browser dan masuk ke http://localhost/phpmyadmin/.
+
+Buat database baru dengan nama: medika_system.
+
+(Pilih Salah Satu):
+
+Cara Otomatis (Migrasi): Jika ingin menggunakan migrasi, jalankan php spark migrate dan php spark db:seed DatabaseSeeder di terminal.
+
+Cara Manual (Import SQL): Cari file bernama medika_system.sql di dalam folder project ini, lalu klik menu Import di phpMyAdmin dan upload file tersebut.
+
+Langkah 6: Jalankan Aplikasi! 🎉
+Semuanya sudah siap! Sekarang kita tinggal menyalakan server lokal bawaan CodeIgniter.
+Di terminal/CMD, ketik:
+
+Bash
+`'php spark serve`
+Buka browser kamu dan ketikkan alamat: http://localhost:8080.
+
+Selamat! Aplikasi MedikaSistem sekarang sudah berjalan sempurna di komputermu. Silakan telusuri kodenya, pelajari alur transaksinya, dan selamat berkreasi!
+
+#Catatan!
+**Kamu harus ada akun sebagai admin dengan cara manual masukan di phpmyadmin**
+#💡 Ingin Berkontribusi?
+Jika kamu menambahkan fitur baru, memperbaiki bug, atau merapikan UI, jangan ragu untuk melakukan Pull Request kembali ke repository utama ini! Mari belajar dan berkembang bersama.
