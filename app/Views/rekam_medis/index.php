@@ -25,8 +25,6 @@
                                 <th>Kode RM</th>
                                 <th>Tgl Periksa</th>
                                 <th>Nama Pasien</th>
-                                <th>Dokter Pemeriksa</th>
-                                <th>Keluhan & Diagnosa</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -37,16 +35,9 @@
                                     <td><?= $i++; ?></td>
                                     <td><span class="badge bg-secondary"><?= $rm['kd_rekam_medis']; ?></span></td>
                                     <td><?= date('d/m/Y', strtotime($rm['tanggal_periksa'])); ?></td>
-                                    <td class="fw-bold"><?= $rm['nama_pasien']; ?><br><small class="text-muted text-nowrap"><?= $rm['no_pendaftaran']; ?></small></td>
-                                    <td><?= $rm['nama_dokter']; ?></td>
-                                    <td>
-                                        <strong>Keluhan:</strong> <?= $rm['keluhan']; ?><br>
-                                        <strong>Diagnosa:</strong> <span class="text-danger"><?= $rm['diagnosa'] ? $rm['diagnosa'] : '-'; ?></span><br>
-                                        <?php if($rm['file']): ?>
-                                            <a href="<?= base_url('uploads/rekam_medis/' . $rm['file']); ?>" target="_blank" class="badge bg-info text-decoration-none mt-1"><i class="bi bi-file-pdf"></i> Lihat File PDF</a>
-                                        <?php endif; ?>
-                                    </td>
+                                    <td class="fw-bold"><?= $rm['nama_pasien']; ?> </td>
                                     <td class="text-center">
+                                        <a href="/rekam_medis/detail/<?= $rm['id']; ?>" class="btn btn-sm btn-info text-white"><i class="bi bi-eye"></i></a>
                                         <a href="/rekam_medis/edit/<?= $rm['id']; ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
                                         <form action="/rekam_medis/delete/<?= $rm['id']; ?>" method="get" class="d-inline">
                                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus data rekam medis ini?');"><i class="bi bi-trash"></i></button>

@@ -53,7 +53,7 @@ class TransaksiLayananController extends BaseController
             // Tampilkan pasien yang tidak batal
             'pendaftaran' => $this->pendaftaranModel->select('pendaftaran.id, pendaftaran.no_pendaftaran, pasien.nama')
                                                     ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
-                                                    ->where('pendaftaran.status !=', 'Batal')
+                                                    ->whereIn('pendaftaran.status', ['Antri', 'Diperiksa'])
                                                     ->findAll(),
             // Hanya tampilkan layanan yang sedang aktif (is_active = 1)
             'layanan'     => $this->layananModel->where('is_active', 1)->findAll()

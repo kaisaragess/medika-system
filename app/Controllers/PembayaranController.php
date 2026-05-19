@@ -63,7 +63,7 @@ class PembayaranController extends BaseController
         $builder = $db->table('pendaftaran pd');
         $builder->select('pd.id, pd.no_pendaftaran, ps.nama');
         $builder->join('pasien ps', 'ps.id = pd.id_pasien');
-        $builder->where('pd.status', 'Selesai');
+        $builder->whereNotIn('pd.status', ['Selesai', 'Batal']);
         // Filter out those already fully paid
         $builder->whereNotIn('pd.id', function($builder) {
             return $builder->select('id_pendaftaran')->from('pembayaran')->where('status_pembayaran', 'Lunas');
@@ -207,6 +207,9 @@ class PembayaranController extends BaseController
         if ($db->transStatus() === FALSE) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan pembayaran.');
         }
+
+        // Update status pendaftaran menjadi Selesai setelah transaksi/pembayaran berhasil
+        $this->pendaftaranModel->update($idPendaftaran, ['status' => 'Selesai']);
 
         return redirect()->to('/pembayaran')->with('pesan', 'Pembayaran kasir berhasil diproses.');
     }

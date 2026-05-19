@@ -85,6 +85,16 @@ class PendaftaranController extends BaseController
         $pasien = $pasienModel->find($this->request->getPost('id_pasien'));
         $poli = $poliModel->find($this->request->getPost('id_poli'));
 
+        $pendaftaranModel = new PendaftaranModel();
+        $hariIni = date('Y-m-d');
+        $jumlahAntreanHariIni = $pendaftaranModel->where('id_poli', $poli['id'])
+                                                 ->like('tgl_daftar', $hariIni)
+                                                 ->countAllResults();
+
+        if ($jumlahAntreanHariIni >= 10) {
+            return redirect()->back()->withInput()->with('error', 'Mohon maaf, kuota antrean untuk Poliklinik ' . $poli['nama_poli'] . ' hari ini sudah penuh (Maksimal 10 pasien).');
+        }
+
         $tempData = [
             'id_pasien'    => $pasien['id'],
             'nama_pasien'  => $pasien['nama'], 

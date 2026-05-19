@@ -38,7 +38,7 @@ class TransaksiObatController extends BaseController
             'validation'  => \Config\Services::validation(), // <-- Tambahkan baris ini
             'pendaftaran' => $this->pendaftaranModel->select('pendaftaran.*, pasien.nama as nama_pasien')
                                                     ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
-                                                    ->where('pendaftaran.status', 'Selesai')
+                                                    ->whereIn('pendaftaran.status', ['Antri', 'Diperiksa'])
                                                     ->findAll(),
             'daftar_obat' => $obatModel->findAll() 
         ];

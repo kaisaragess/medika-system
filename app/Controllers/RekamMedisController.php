@@ -51,7 +51,7 @@ class RekamMedisController extends BaseController
 
         // Ambil data pendaftaran (gabung dengan pasien agar namanya muncul di dropdown)
         // Kita hanya mengambil yang statusnya 'Antri' atau 'Diperiksa' agar dropdown tidak kepanjangan
-        $pendaftaranAktif = $this->pendaftaranModel->select('pendaftaran.id, pendaftaran.no_pendaftaran, pasien.nama')
+        $pendaftaranAktif = $this->pendaftaranModel->select('pendaftaran.id, pendaftaran.no_pendaftaran, pendaftaran.keluhan_awal, pasien.nama')
                                                    ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
                                                    ->whereIn('pendaftaran.status', ['Antri', 'Diperiksa'])
                                                    ->findAll();
@@ -122,14 +122,37 @@ class RekamMedisController extends BaseController
             'file'            => $namaFile
         ]);
 
-        // Opsional & Keren: Otomatis ubah status pendaftaran menjadi 'Selesai' setelah rekam medis diisi
+        // Ubah status pendaftaran menjadi 'Diperiksa' (bukan Selesai, karena belum bayar)
         $this->pendaftaranModel->save([
             'id'     => $this->request->getPost('id_pendaftaran'),
-            'status' => 'Selesai'
+            'status' => 'Diperiksa'
         ]);
 
-        session()->setFlashdata('pesan', 'Rekam medis berhasil disimpan dan status pasien diperbarui.');
+        session()->setFlashdata('pesan', 'Rekam medis berhasil disimpan dan status pasien diperbarui menjadi Diperiksa.');
         return redirect()->to('/rekam_medis');
+    }
+
+    // ==========================================
+    // X. READ: Menampilkan Detail Rekam Medis
+    // ==========================================
+    public function detail($id)
+    {
+        $rekamMedis = $this->rekamMedisModel->select('rekam_medis.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, pegawai.nama as nama_dokter')
+                                            ->join('pendaftaran', 'pendaftaran.id = rekam_medis.id_pendaftaran')
+                                            ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
+                                            ->join('pegawai', 'pegawai.id = rekam_medis.id_pegawai')
+                                            ->find($id);
+
+        if (empty($rekamMedis)) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Rekam medis dengan ID ' . $id . ' tidak ditemukan.');
+        }
+
+        $data = [
+            'title'       => 'Detail Rekam Medis | MedikaSistem',
+            'rekam_medis' => $rekamMedis
+        ];
+
+        return view('rekam_medis/detail', $data);
     }
 
     // ==========================================
@@ -142,7 +165,7 @@ class RekamMedisController extends BaseController
             'validation'  => \Config\Services::validation(),
             'rekam_medis' => $this->rekamMedisModel->find($id),
             // Saat edit, tampilkan semua pendaftaran (tidak hanya yang aktif)
-            'pendaftaran' => $this->pendaftaranModel->select('pendaftaran.id, pendaftaran.no_pendaftaran, pasien.nama')
+            'pendaftaran' => $this->pendaftaranModel->select('pendaftaran.id, pendaftaran.no_pendaftaran, pendaftaran.keluhan_awal, pasien.nama')
                                                     ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
                                                     ->findAll(),
             'dokter'      => $this->pegawaiModel->where('role', 'Dokter')->findAll()

@@ -26,7 +26,15 @@
                             <select class="form-select <?= ($validation->hasError('id_pegawai')) ? 'is-invalid' : ''; ?>" id="id_pegawai" name="id_pegawai">
                                 <option value="">-- Pilih Dokter --</option>
                                 <?php foreach($dokter as $dkt): ?>
-                                    <option value="<?= $dkt['id']; ?>" <?= old('id_pegawai') == $dkt['id'] ? 'selected' : ''; ?>>
+                                    <?php 
+                                        $selected = '';
+                                        if (old('id_pegawai') == $dkt['id']) {
+                                            $selected = 'selected';
+                                        } elseif (!old('id_pegawai') && session()->get('role') == 'Dokter' && session()->get('id_pegawai') == $dkt['id']) {
+                                            $selected = 'selected';
+                                        }
+                                    ?>
+                                    <option value="<?= $dkt['id']; ?>" <?= $selected; ?>>
                                         <?= $dkt['nama']; ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -40,7 +48,7 @@
                         <select class="form-select <?= ($validation->hasError('id_pendaftaran')) ? 'is-invalid' : ''; ?>" id="id_pendaftaran" name="id_pendaftaran" autofocus>
                             <option value="">-- Pilih Antrean Pasien --</option>
                             <?php foreach($pendaftaran as $psn): ?>
-                                <option value="<?= $psn['id']; ?>" <?= old('id_pendaftaran') == $psn['id'] ? 'selected' : ''; ?>>
+                                <option value="<?= $psn['id']; ?>" data-keluhan="<?= esc($psn['keluhan_awal'] ?? ''); ?>" <?= old('id_pendaftaran') == $psn['id'] ? 'selected' : ''; ?>>
                                     [<?= $psn['no_pendaftaran']; ?>] - <?= $psn['nama']; ?>
                                 </option>
                             <?php endforeach; ?>
@@ -89,4 +97,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pendaftaranSelect = document.getElementById('id_pendaftaran');
+        const keluhanTextarea = document.getElementById('keluhan');
+
+        pendaftaranSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.value !== '') {
+                const keluhanAwal = selectedOption.getAttribute('data-keluhan');
+                if (keluhanAwal) {
+                    keluhanTextarea.value = keluhanAwal;
+                }
+            } else {
+                keluhanTextarea.value = '';
+            }
+        });
+    });
+</script>
 <?= $this->endSection(); ?>

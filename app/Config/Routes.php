@@ -87,6 +87,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
         $routes->get('/rekam_medis', 'RekamMedisController::index');                 
         $routes->get('/rekam_medis/create', 'RekamMedisController::create');         
         $routes->post('/rekam_medis/store', 'RekamMedisController::store');          
+        $routes->get('/rekam_medis/detail/(:num)', 'RekamMedisController::detail/$1');
         $routes->get('/rekam_medis/edit/(:num)', 'RekamMedisController::edit/$1');   
         $routes->post('/rekam_medis/update/(:num)', 'RekamMedisController::update/$1'); 
         $routes->get('/rekam_medis/delete/(:num)', 'RekamMedisController::delete/$1');
