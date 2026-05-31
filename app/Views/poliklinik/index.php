@@ -29,9 +29,9 @@
                     <?php foreach ($poliklinik as $p) : ?>
                         <tr>
                             <td class="ps-3"><?= $i++; ?></td>
-                            <td><span class="badge  fw-bold"><?= $p['kode_poli']; ?></span></td>
+                            <td><span class="badge bg-primary  fw-bold"><?= $p['kode_poli']; ?></span></td>
                             <td>
-                                <span class="badge ">Lantai <?= substr($p['kode_poli'], 0, 1); ?></span>
+                                <span class="badge bg-secondary ">Lantai <?= substr($p['kode_poli'], 0, 1); ?></span>
                             </td>
                             <td class="text-uppercase fw-bold text-primary"><?= $p['nama_poli']; ?></td>
                             <td><?= $p['daftar_spesialisasi']; ?></td>
