@@ -32,12 +32,19 @@ class PembayaranController extends BaseController
 
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+
         // Get all pembayaran with related pasien data
         $db = \Config\Database::connect();
         $builder = $db->table('pembayaran p');
         $builder->select('p.*, pd.no_pendaftaran, ps.nama as nama_pasien');
         $builder->join('pendaftaran pd', 'pd.id = p.id_pendaftaran');
         $builder->join('pasien ps', 'ps.id = pd.id_pasien');
+        
+        if ($keyword) {
+            $builder->like('p.no_tagihan', $keyword);
+        }
+
         $builder->orderBy('p.tgl_bayar', 'DESC');
         
         $pembayaran = $builder->get()->getResultArray();
@@ -49,7 +56,8 @@ class PembayaranController extends BaseController
         }
 
         $data = [
-            'pembayaran' => $pembayaran
+            'pembayaran' => $pembayaran,
+            'keyword'    => $keyword
         ];
 
         return view('pembayaran/index', $data);

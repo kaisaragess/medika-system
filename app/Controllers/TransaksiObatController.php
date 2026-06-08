@@ -20,9 +20,12 @@ class TransaksiObatController extends BaseController
     // Menampilkan halaman utama transaksi obat (Index)
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+
         $data = [
             'title'     => 'Riwayat Transaksi Apotek',
-            'transaksi' => $this->transaksiObatModel->getTransaksiLengkap() // Mengambil data join pasien
+            'transaksi' => $this->transaksiObatModel->getTransaksiLengkap($keyword), // Mengambil data join pasien
+            'keyword'   => $keyword
         ];
 
         return view('transaksi_obat/index', $data);

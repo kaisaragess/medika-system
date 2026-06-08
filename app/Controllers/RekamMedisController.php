@@ -25,17 +25,24 @@ class RekamMedisController extends BaseController
     // ==========================================
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+
         // Menggunakan JOIN berlapis agar tampil: No Pendaftaran, Nama Pasien, dan Nama Dokter
-        $rekamMedis = $this->rekamMedisModel->select('rekam_medis.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, pegawai.nama as nama_dokter')
+        $query = $this->rekamMedisModel->select('rekam_medis.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, pegawai.nama as nama_dokter')
                                             ->join('pendaftaran', 'pendaftaran.id = rekam_medis.id_pendaftaran')
                                             ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
-                                            ->join('pegawai', 'pegawai.id = rekam_medis.id_pegawai')
-                                            ->orderBy('rekam_medis.tanggal_periksa', 'DESC')
-                                            ->findAll();
+                                            ->join('pegawai', 'pegawai.id = rekam_medis.id_pegawai');
+
+        if ($keyword) {
+            $query = $query->like('rekam_medis.kd_rekam_medis', $keyword);
+        }
+
+        $rekamMedis = $query->orderBy('rekam_medis.tanggal_periksa', 'DESC')->findAll();
 
         $data = [
             'title'       => 'Data Rekam Medis | MedikaSistem',
-            'rekam_medis' => $rekamMedis
+            'rekam_medis' => $rekamMedis,
+            'keyword'     => $keyword
         ];
 
         return view('rekam_medis/index', $data);

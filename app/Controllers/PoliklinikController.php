@@ -18,9 +18,17 @@ class PoliklinikController extends BaseController
     // ==========================================
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $poliklinik = $this->poliklinikModel->like('kode_poli', $keyword)->findAll();
+        } else {
+            $poliklinik = $this->poliklinikModel->findAll();
+        }
+
         $data = [
             'title'      => 'Data Poliklinik | MedikaSistem',
-            'poliklinik' => $this->poliklinikModel->findAll()
+            'poliklinik' => $poliklinik,
+            'keyword'    => $keyword
         ];
 
         return view('poliklinik/index', $data);

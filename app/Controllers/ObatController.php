@@ -17,9 +17,17 @@ class ObatController extends BaseController
     // read
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $obat = $this->obatModel->like('kd_obat', $keyword)->findAll();
+        } else {
+            $obat = $this->obatModel->findAll();
+        }
+
         $data = [
-            'title' => 'Daftar Obat | MedikaSistem',
-            'obat'  => $this->obatModel->findAll()
+            'title'   => 'Daftar Obat | MedikaSistem',
+            'obat'    => $obat,
+            'keyword' => $keyword
         ];
 
         return view('obat/index', $data);

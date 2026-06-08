@@ -6,6 +6,17 @@
     <a href="/poliklinik/create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Spesialisasi</a>
 </div>
 
+<div class="row mb-3">
+    <div class="col-md-6 offset-md-6">
+        <form action="" method="get">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Cari berdasarkan Kode Poliklinik..." name="keyword" value="<?= esc($keyword ?? ''); ?>">
+                <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i class="bi bi-search"></i> Cari</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <?php if (session()->getFlashdata('pesan')) : ?>
     <div class="alert alert-success border-0 shadow-sm"><?= session()->getFlashdata('pesan'); ?></div>
 <?php endif; ?>

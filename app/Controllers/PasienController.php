@@ -16,9 +16,17 @@ class PasienController extends BaseController
     // read
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $pasien = $this->pasienModel->like('nik', $keyword)->findAll();
+        } else {
+            $pasien = $this->pasienModel->findAll();
+        }
+
         $data = [
-            'title'  => 'Daftar Pasien | MedikaSistem',
-            'pasien' => $this->pasienModel->findAll()
+            'title'   => 'Daftar Pasien | MedikaSistem',
+            'pasien'  => $pasien,
+            'keyword' => $keyword
         ];
 
         return view('pasien/index', $data);

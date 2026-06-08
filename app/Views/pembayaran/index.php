@@ -8,6 +8,17 @@
             <a href="/pembayaran/create" class="btn btn-primary"><i class="bi bi-cash-coin"></i> Proses Pembayaran Baru</a>
         </div>
 
+        <div class="row mb-3">
+            <div class="col-md-6 offset-md-6">
+                <form action="" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Cari berdasarkan No. Tagihan/Invoice..." name="keyword" value="<?= esc($keyword ?? ''); ?>">
+                        <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i class="bi bi-search"></i> Cari</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <?php if (session()->getFlashdata('pesan')) : ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <?= session()->getFlashdata('pesan'); ?>

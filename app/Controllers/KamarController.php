@@ -18,9 +18,17 @@ class KamarController extends BaseController
     // ==========================================
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $kamar = $this->kamarModel->like('kd_kmr', $keyword)->findAll();
+        } else {
+            $kamar = $this->kamarModel->findAll();
+        }
+
         $data = [
-            'title' => 'Data Kamar | MedikaSistem',
-            'kamar' => $this->kamarModel->findAll()
+            'title'   => 'Data Kamar | MedikaSistem',
+            'kamar'   => $kamar,
+            'keyword' => $keyword
         ];
 
         return view('kamar/index', $data);

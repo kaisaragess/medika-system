@@ -20,22 +20,29 @@ class TransaksiKamarController extends BaseController
     }
 
     public function index()
-        {
-            // Tambahkan pendaftaran.no_pendaftaran di bagian select
-            $transaksi = $this->transaksiKamarModel->select('transaksi_kamar.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, kamar.kd_kmr, kamar.kelas, kamar.harga_per_malam')
-                                                ->join('pendaftaran', 'pendaftaran.id = transaksi_kamar.id_pendaftaran')
-                                                ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
-                                                ->join('kamar', 'kamar.id = transaksi_kamar.id_kamar')
-                                                ->orderBy('transaksi_kamar.status', 'ASC')
-                                                ->findAll();
+    {
+        $keyword = $this->request->getVar('keyword');
 
-            $data = [
-                'title'     => 'Manajemen Rawat Inap',
-                'transaksi' => $transaksi
-            ];
+        // Tambahkan pendaftaran.no_pendaftaran di bagian select
+        $query = $this->transaksiKamarModel->select('transaksi_kamar.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, kamar.kd_kmr, kamar.kelas, kamar.harga_per_malam')
+                                            ->join('pendaftaran', 'pendaftaran.id = transaksi_kamar.id_pendaftaran')
+                                            ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
+                                            ->join('kamar', 'kamar.id = transaksi_kamar.id_kamar');
 
-            return view('transaksi_kamar/index', $data);
+        if ($keyword) {
+            $query = $query->like('pendaftaran.no_pendaftaran', $keyword);
         }
+
+        $transaksi = $query->orderBy('transaksi_kamar.status', 'ASC')->findAll();
+
+        $data = [
+            'title'     => 'Manajemen Rawat Inap',
+            'transaksi' => $transaksi,
+            'keyword'   => $keyword
+        ];
+
+        return view('transaksi_kamar/index', $data);
+    }
     public function create()
     {
         $data = [

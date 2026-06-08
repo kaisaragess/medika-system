@@ -25,18 +25,25 @@ class TransaksiLayananController extends BaseController
     // ==========================================
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+
         // JOIN untuk menampilkan No Pendaftaran, Nama Pasien, dan Nama Layanan
-        $transaksi = $this->transaksiLayananModel
+        $query = $this->transaksiLayananModel
             ->select('transaksi_layanan.*, pendaftaran.no_pendaftaran, pasien.nama as nama_pasien, layanan.nama_layanan')
             ->join('pendaftaran', 'pendaftaran.id = transaksi_layanan.id_pendaftaran')
             ->join('pasien', 'pasien.id = pendaftaran.id_pasien')
-            ->join('layanan', 'layanan.id = transaksi_layanan.id_layanan')
-            ->orderBy('transaksi_layanan.id', 'DESC')
-            ->findAll();
+            ->join('layanan', 'layanan.id = transaksi_layanan.id_layanan');
+
+        if ($keyword) {
+            $query = $query->like('pendaftaran.no_pendaftaran', $keyword);
+        }
+
+        $transaksi = $query->orderBy('transaksi_layanan.id', 'DESC')->findAll();
 
         $data = [
             'title'     => 'Transaksi Layanan Medis | MedikaSistem',
-            'transaksi' => $transaksi
+            'transaksi' => $transaksi,
+            'keyword'   => $keyword
         ];
 
         return view('transaksi_layanan/index', $data);

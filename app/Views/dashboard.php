@@ -61,11 +61,42 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="fw-bold text-uppercase small text-info"><i class="bi bi-cpu"></i> Prediksi ML Sistem</div>
                 </div>
-                <h5 class="fw-bold mb-2">Risiko Lonjakan Pasien</h5>
+                <h5 class="fw-bold mb-2 text-light">Risiko Lonjakan Pasien</h5>
                 <div class="progress mb-2 bg-secondary" style="height: 8px;">
                     <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: 78%"></div>
                 </div>
                 <p class="small text-light opacity-75 mb-0">Probabilitas tinggi pada Poli Umum (14:00 - 16:00).</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Informasi Sisa Kuota Antrean Poliklinik -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="bi bi-ticket-detailed text-primary"></i> Sisa Kuota Antrean Poliklinik (Hari Ini)</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <?php if (isset($kuota_antrean) && !empty($kuota_antrean)) : ?>
+                        <?php foreach ($kuota_antrean as $kuota) : ?>
+                        <div class="col-md-3 mb-3">
+                            <div class="border rounded-3 p-3 text-center <?= $kuota['sisa_tiket'] == 0 ? 'bg-danger bg-opacity-10 border-danger' : 'bg-light' ?>">
+                                <h6 class="fw-bold text-primary mb-1 text-uppercase"><?= $kuota['nama_poli']; ?></h6>
+                                <h2 class="fw-bold mb-0 <?= $kuota['sisa_tiket'] == 0 ? 'text-danger' : 'text-success' ?>"><?= $kuota['sisa_tiket']; ?> <span class="fs-6 text-muted">/ 10</span></h2>
+                                <small class="text-muted">Tiket Tersisa</small>
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar <?= $kuota['sisa_tiket'] == 0 ? 'bg-danger' : 'bg-success' ?>" role="progressbar" style="width: <?= $kuota['persentase']; ?>%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <div class="col-12 text-center text-muted">Data poliklinik belum tersedia.</div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

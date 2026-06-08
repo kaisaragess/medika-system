@@ -18,9 +18,17 @@ class LayananController extends BaseController
     // ==========================================
     public function index()
     {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $layanan = $this->layananModel->like('kd_layanan', $keyword)->findAll();
+        } else {
+            $layanan = $this->layananModel->findAll();
+        }
+
         $data = [
             'title'   => 'Data Layanan Medis | MedikaSistem',
-            'layanan' => $this->layananModel->findAll()
+            'layanan' => $layanan,
+            'keyword' => $keyword
         ];
 
         return view('layanan/index', $data);
