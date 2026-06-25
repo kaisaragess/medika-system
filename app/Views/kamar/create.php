@@ -13,13 +13,17 @@
 
                     <div class="mb-3">
                         <label for="kd_kmr" class="form-label">Kode Kamar</label>
-                        <input type="text" class="form-control <?= ($validation->hasError('kd_kmr')) ? 'is-invalid' : ''; ?>" id="kd_kmr" name="kd_kmr" value="<?= old('kd_kmr'); ?>" autofocus placeholder="Misal: VIP-01">
+                        <input type="text"
+                            class="form-control <?= ($validation->hasError('kd_kmr')) ? 'is-invalid' : ''; ?>"
+                            id="kd_kmr" name="kd_kmr" value="<?= old('kd_kmr'); ?>" autofocus
+                            placeholder="Misal: VIP-01 atau 111">
                         <div class="invalid-feedback"><?= $validation->getError('kd_kmr'); ?></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="kelas" class="form-label">Kelas Kamar</label>
-                        <select class="form-select <?= ($validation->hasError('kelas')) ? 'is-invalid' : ''; ?>" id="kelas" name="kelas">
+                        <select class="form-select <?= ($validation->hasError('kelas')) ? 'is-invalid' : ''; ?>"
+                            id="kelas" name="kelas">
                             <option value="" disabled <?= old('kelas') == '' ? 'selected' : ''; ?>>Pilih Kelas...</option>
                             <option value="VVIP" <?= old('kelas') == 'VVIP' ? 'selected' : ''; ?>>VVIP</option>
                             <option value="VIP" <?= old('kelas') == 'VIP' ? 'selected' : ''; ?>>VIP</option>
@@ -32,16 +36,21 @@
 
                     <div class="mb-3">
                         <label for="harga_per_malam" class="form-label">Harga per Malam (Rp)</label>
-                        <input type="number" class="form-control <?= ($validation->hasError('harga_per_malam')) ? 'is-invalid' : ''; ?>" id="harga_per_malam" name="harga_per_malam" value="<?= old('harga_per_malam'); ?>">
+                        <input type="number"
+                            class="form-control <?= ($validation->hasError('harga_per_malam')) ? 'is-invalid' : ''; ?>"
+                            id="harga_per_malam" name="harga_per_malam" value="<?= old('harga_per_malam'); ?>">
                         <div class="invalid-feedback"><?= $validation->getError('harga_per_malam'); ?></div>
                     </div>
 
                     <div class="mb-4">
                         <label for="status" class="form-label">Status Awal</label>
-                        <select class="form-select <?= ($validation->hasError('status')) ? 'is-invalid' : ''; ?>" id="status" name="status">
-                            <option value="Tersedia" <?= old('status') == 'Tersedia' ? 'selected' : ''; ?>>Tersedia</option>
+                        <select class="form-select <?= ($validation->hasError('status')) ? 'is-invalid' : ''; ?>"
+                            id="status" name="status">
+                            <option value="Tersedia" <?= old('status') == 'Tersedia' ? 'selected' : ''; ?>>Tersedia
+                            </option>
                             <option value="Terisi" <?= old('status') == 'Terisi' ? 'selected' : ''; ?>>Terisi</option>
-                            <option value="Perbaikan" <?= old('status') == 'Perbaikan' ? 'selected' : ''; ?>>Perbaikan</option>
+                            <option value="Perbaikan" <?= old('status') == 'Perbaikan' ? 'selected' : ''; ?>>Perbaikan
+                            </option>
                         </select>
                         <div class="invalid-feedback"><?= $validation->getError('status'); ?></div>
                     </div>
