@@ -14,7 +14,7 @@
                     <div class="mb-3">
                         <label for="id_pendaftaran" class="form-label">Pasien (Pendaftaran)</label>
                         <?php $id_pendaftaran = (old('id_pendaftaran')) ? old('id_pendaftaran') : $transaksi['id_pendaftaran']; ?>
-                        <select class="form-select <?= ($validation->hasError('id_pendaftaran')) ? 'is-invalid' : ''; ?>" id="id_pendaftaran" name="id_pendaftaran">
+                        <select class="form-select select2 <?= ($validation->hasError('id_pendaftaran')) ? 'is-invalid' : ''; ?>" id="id_pendaftaran" name="id_pendaftaran">
                             <?php foreach($pendaftaran as $psn): ?>
                                 <option value="<?= $psn['id']; ?>" <?= $id_pendaftaran == $psn['id'] ? 'selected' : ''; ?>>
                                     [<?= $psn['no_pendaftaran']; ?>] - <?= $psn['nama']; ?>
@@ -28,7 +28,7 @@
                         <div class="col-md-8">
                             <label for="id_layanan" class="form-label">Jenis Layanan / Tindakan</label>
                             <?php $id_layanan = (old('id_layanan')) ? old('id_layanan') : $transaksi['id_layanan']; ?>
-                            <select class="form-select <?= ($validation->hasError('id_layanan')) ? 'is-invalid' : ''; ?>" id="id_layanan" name="id_layanan">
+                            <select class="form-select select2 <?= ($validation->hasError('id_layanan')) ? 'is-invalid' : ''; ?>" id="id_layanan" name="id_layanan">
                                 <?php foreach($layanan as $lyn): ?>
                                     <option value="<?= $lyn['id']; ?>" <?= $id_layanan == $lyn['id'] ? 'selected' : ''; ?>>
                                         <?= $lyn['nama_layanan']; ?> (Rp <?= number_format($lyn['harga'], 0, ',', '.'); ?>)
@@ -53,4 +53,15 @@
         </div>
     </div>
 </div>
+
+<?= $this->section('scripts'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+});
+</script>
+<?= $this->endSection(); ?>
 <?= $this->endSection(); ?>

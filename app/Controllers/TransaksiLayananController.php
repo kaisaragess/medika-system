@@ -79,11 +79,11 @@ class TransaksiLayananController extends BaseController
                 'rules'  => 'required',
                 'errors' => ['required' => 'Data pendaftaran/pasien harus dipilih.']
             ],
-            'id_layanan' => [
+            'id_layanan.*' => [
                 'rules'  => 'required',
                 'errors' => ['required' => 'Layanan medis harus dipilih.']
             ],
-            'qty' => [
+            'qty.*' => [
                 'rules'  => 'required|integer|greater_than[0]',
                 'errors' => [
                     'required'     => 'Jumlah (Qty) harus diisi.',
@@ -92,23 +92,38 @@ class TransaksiLayananController extends BaseController
                 ]
             ]
         ])) {
-            return redirect()->to('/transaksi_layanan/create')->withInput();
+            return redirect()->to('/transaksi_layanan/create')->withInput()->with('error', 'Mohon lengkapi data layanan dengan benar.');
         }
 
-        // Ambil data layanan dari database untuk mengetahui harga per item-nya
-        $id_layanan = $this->request->getPost('id_layanan');
-        $layanan = $this->layananModel->find($id_layanan);
-        
-        // Kalkulasi Total Harga (Harga x Qty)
-        $qty = $this->request->getPost('qty');
-        $total_harga = $layanan['harga'] * $qty;
+        $idPendaftaran = $this->request->getPost('id_pendaftaran');
+        $idLayananArr = $this->request->getPost('id_layanan');
+        $qtyArr = $this->request->getPost('qty');
 
-        $this->transaksiLayananModel->save([
-            'id_pendaftaran' => $this->request->getPost('id_pendaftaran'),
-            'id_layanan'     => $id_layanan,
-            'qty'            => $qty,
-            'total_harga'    => $total_harga // Disimpan hasil kalkulasi otomatisnya
-        ]);
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        for($i = 0; $i < count($idLayananArr); $i++) {
+            $idLayanan = $idLayananArr[$i];
+            $qty = $qtyArr[$i];
+
+            $layanan = $this->layananModel->find($idLayanan);
+            if($layanan) {
+                $total_harga = $layanan['harga'] * $qty;
+
+                $this->transaksiLayananModel->insert([
+                    'id_pendaftaran' => $idPendaftaran,
+                    'id_layanan'     => $idLayanan,
+                    'qty'            => $qty,
+                    'total_harga'    => $total_harga
+                ]);
+            }
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === FALSE) {
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan transaksi.');
+        }
 
         session()->setFlashdata('pesan', 'Tindakan/Layanan medis berhasil ditambahkan ke tagihan pasien.');
         return redirect()->to('/transaksi_layanan');

@@ -125,8 +125,10 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
         // Pembayaran / Kasir
         $routes->get('/pembayaran', 'PembayaranController::index');
         $routes->get('/pembayaran/create', 'PembayaranController::create');
+        $routes->get('/pembayaran/get_biaya/(:num)', 'PembayaranController::getBiaya/$1');
         $routes->post('/pembayaran/store', 'PembayaranController::store');
         $routes->get('/pembayaran/cetak/(:num)', 'PembayaranController::cetak/$1');
+        $routes->get('/pembayaran/cetak_laporan', 'PembayaranController::cetakLaporan');
     });
 });
 

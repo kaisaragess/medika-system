@@ -39,6 +39,13 @@
                         <div class="invalid-feedback"><?= $validation->getError('id_pendaftaran'); ?></div>
                     </div>
 
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Rincian Biaya</label>
+                        <div id="rincian_biaya" class="border rounded p-3 bg-light">
+                            <div class="alert alert-secondary mb-0">Pilih pasien untuk melihat rincian biaya.</div>
+                        </div>
+                    </div>
+
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Metode Pembayaran</label>
@@ -61,7 +68,6 @@
 
                     <div class="d-flex justify-content-between">
                         <a href="/pembayaran" class="btn btn-secondary">Batal</a>
-                        <!-- Kasir klik tombol ini, lalu Controller yang akan menghitung Grand Total-nya -->
                         <button type="submit" class="btn btn-success"><i class="bi bi-calculator"></i> Hitung & Simpan Pembayaran</button>
                     </div>
                 </form>
@@ -69,4 +75,93 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pendaftaranSelect = document.getElementById('id_pendaftaran');
+    const rincianContainer = document.getElementById('rincian_biaya');
+    
+    // trigger change if already selected
+    if(pendaftaranSelect.value) {
+        pendaftaranSelect.dispatchEvent(new Event('change'));
+    }
+
+    pendaftaranSelect.addEventListener('change', function() {
+        const id = this.value;
+        if (!id) {
+            rincianContainer.innerHTML = '<div class="alert alert-secondary mb-0">Pilih pasien untuk melihat rincian biaya.</div>';
+            return;
+        }
+        
+        rincianContainer.innerHTML = '<div class="text-center"><div class="spinner-border text-primary spinner-border-sm" role="status"></div><p class="mt-2 mb-0">Memuat rincian...</p></div>';
+        
+        fetch('/pembayaran/get_biaya/' + id)
+            .then(response => response.json())
+            .then(data => {
+                let html = '<div class="table-responsive"><table class="table table-bordered table-sm mb-0 bg-white">';
+                html += '<thead class="table-light"><tr><th>Item</th><th>Qty/Hari</th><th>Biaya</th><th>Subtotal</th></tr></thead><tbody>';
+                
+                // Layanan
+                if (data.trans_layanan.length > 0) {
+                    html += '<tr><td colspan="4" class="fw-bold bg-light">Tindakan / Layanan</td></tr>';
+                    data.trans_layanan.forEach(item => {
+                        html += `<tr>
+                            <td>${item.nama_layanan}</td>
+                            <td>${item.qty}</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.harga_satuan)}</td>
+                            <td class="text-end">Rp ${new Intl.NumberFormat('id-ID').format(item.total_harga)}</td>
+                        </tr>`;
+                    });
+                }
+                
+                // Obat
+                if (data.trans_obat.length > 0) {
+                    html += '<tr><td colspan="4" class="fw-bold bg-light">Resep Obat</td></tr>';
+                    data.trans_obat.forEach(item => {
+                        const hargaSatuan = item.tagihan_obat / item.qty;
+                        html += `<tr>
+                            <td>${item.nama_obat}</td>
+                            <td>${item.qty}</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(hargaSatuan)}</td>
+                            <td class="text-end">Rp ${new Intl.NumberFormat('id-ID').format(item.tagihan_obat)}</td>
+                        </tr>`;
+                    });
+                }
+                
+                // Kamar
+                if (data.trans_kamar.length > 0) {
+                    html += '<tr><td colspan="4" class="fw-bold bg-light">Rawat Inap</td></tr>';
+                    data.trans_kamar.forEach(item => {
+                        const biayaPerHari = item.total_biaya / item.hari;
+                        html += `<tr>
+                            <td>Kamar ${item.kd_kmr} (${item.kelas})</td>
+                            <td>${item.hari} Hari</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(biayaPerHari)}</td>
+                            <td class="text-end">Rp ${new Intl.NumberFormat('id-ID').format(item.total_biaya)}</td>
+                        </tr>`;
+                    });
+                }
+                
+                if (data.grand_total === 0) {
+                    html += '<tr><td colspan="4" class="text-center text-muted">Tidak ada tagihan untuk pasien ini.</td></tr>';
+                }
+                
+                html += '</tbody>';
+                html += `<tfoot>
+                    <tr class="table-primary">
+                        <th colspan="3" class="text-end">Grand Total</th>
+                        <th class="text-end">Rp ${new Intl.NumberFormat('id-ID').format(data.grand_total)}</th>
+                    </tr>
+                </tfoot>`;
+                html += '</table></div>';
+                
+                rincianContainer.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error fetching biaya:', error);
+                rincianContainer.innerHTML = '<div class="alert alert-danger mb-0">Gagal memuat rincian biaya.</div>';
+            });
+    });
+});
+</script>
 <?= $this->endSection(); ?>

@@ -33,6 +33,8 @@ class PembayaranController extends BaseController
     public function index()
     {
         $keyword = $this->request->getVar('keyword');
+        $startDate = $this->request->getVar('start_date');
+        $endDate = $this->request->getVar('end_date');
 
         // Get all pembayaran with related pasien data
         $db = \Config\Database::connect();
@@ -43,6 +45,14 @@ class PembayaranController extends BaseController
         
         if ($keyword) {
             $builder->like('p.no_tagihan', $keyword);
+        }
+
+        if ($startDate) {
+            $builder->where('DATE(p.tgl_bayar) >=', $startDate);
+        }
+
+        if ($endDate) {
+            $builder->where('DATE(p.tgl_bayar) <=', $endDate);
         }
 
         $builder->orderBy('p.tgl_bayar', 'DESC');
@@ -57,10 +67,58 @@ class PembayaranController extends BaseController
 
         $data = [
             'pembayaran' => $pembayaran,
-            'keyword'    => $keyword
+            'keyword'    => $keyword,
+            'start_date' => $startDate,
+            'end_date'   => $endDate
         ];
 
         return view('pembayaran/index', $data);
+    }
+
+    public function cetakLaporan()
+    {
+        $keyword = $this->request->getVar('keyword');
+        $startDate = $this->request->getVar('start_date');
+        $endDate = $this->request->getVar('end_date');
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('pembayaran p');
+        $builder->select('p.*, pd.no_pendaftaran, ps.nama as nama_pasien');
+        $builder->join('pendaftaran pd', 'pd.id = p.id_pendaftaran');
+        $builder->join('pasien ps', 'ps.id = pd.id_pasien');
+        
+        if ($keyword) {
+            $builder->like('p.no_tagihan', $keyword);
+        }
+        if ($startDate) {
+            $builder->where('DATE(p.tgl_bayar) >=', $startDate);
+        }
+        if ($endDate) {
+            $builder->where('DATE(p.tgl_bayar) <=', $endDate);
+        }
+
+        $builder->orderBy('p.tgl_bayar', 'ASC');
+        $pembayaran = $builder->get()->getResultArray();
+
+        $data = [
+            'pembayaran' => $pembayaran,
+            'start_date' => $startDate,
+            'end_date'   => $endDate
+        ];
+
+        $html = view('pembayaran/cetak_laporan', $data);
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'Helvetica');
+        
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        
+        $dompdf->stream("Laporan_Pembayaran.pdf", ["Attachment" => false]);
+        exit();
     }
 
     public function create()
@@ -86,6 +144,66 @@ class PembayaranController extends BaseController
         ];
 
         return view('pembayaran/create', $data);
+    }
+
+    public function getBiaya($idPendaftaran)
+    {
+        $db = \Config\Database::connect();
+        
+        // 1. Calculate Obat
+        $builderObat = $db->table('transaksi_obat to');
+        $builderObat->select('to.*, o.nama_obat');
+        $builderObat->join('obat o', 'o.id = to.id_obat');
+        $builderObat->where('to.id_pendaftaran', $idPendaftaran);
+        $transObat = $builderObat->get()->getResultArray();
+        
+        $totalObat = 0;
+        foreach ($transObat as $to) {
+            $totalObat += $to['tagihan_obat'];
+        }
+
+        // 2. Calculate Layanan
+        $builderLayanan = $db->table('transaksi_layanan tl');
+        $builderLayanan->select('tl.*, l.nama_layanan, l.harga as harga_satuan');
+        $builderLayanan->join('layanan l', 'l.id = tl.id_layanan');
+        $builderLayanan->where('tl.id_pendaftaran', $idPendaftaran);
+        $transLayanan = $builderLayanan->get()->getResultArray();
+        
+        $totalLayanan = 0;
+        foreach ($transLayanan as $tl) {
+            $totalLayanan += $tl['total_harga'];
+        }
+
+        // 3. Calculate Kamar
+        $builderKamar = $db->table('transaksi_kamar tk');
+        $builderKamar->select('tk.*, k.kd_kmr, k.kelas');
+        $builderKamar->join('kamar k', 'k.id = tk.id_kamar');
+        $builderKamar->where('tk.id_pendaftaran', $idPendaftaran);
+        $transKamar = $builderKamar->get()->getResultArray();
+        
+        $totalKamar = 0;
+        $kamarDetails = [];
+        foreach ($transKamar as $tk) {
+            $totalKamar += $tk['total_biaya'];
+            $tglMasuk = new \DateTime($tk['tgl_masuk']);
+            $tglKeluar = new \DateTime($tk['tgl_keluar']);
+            $diff = $tglMasuk->diff($tglKeluar);
+            $hari = $diff->days == 0 ? 1 : $diff->days;
+            $tk['hari'] = $hari;
+            $kamarDetails[] = $tk;
+        }
+
+        $grandTotal = $totalObat + $totalLayanan + $totalKamar;
+
+        return $this->response->setJSON([
+            'trans_obat' => $transObat,
+            'total_obat' => $totalObat,
+            'trans_layanan' => $transLayanan,
+            'total_layanan' => $totalLayanan,
+            'trans_kamar' => $kamarDetails,
+            'total_kamar' => $totalKamar,
+            'grand_total' => $grandTotal
+        ]);
     }
 
     public function store()

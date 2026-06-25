@@ -12,7 +12,7 @@ class TransaksiKamarModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-protected $allowedFields    = ['id_pendaftaran', 'id_kamar', 'tgl_masuk', 'tgl_keluar', 'total_biaya'];
+    protected $allowedFields    = ['id_pendaftaran', 'id_kamar', 'tgl_masuk', 'tgl_keluar', 'total_biaya', 'status'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

@@ -8,12 +8,24 @@
             <a href="/pembayaran/create" class="btn btn-primary"><i class="bi bi-cash-coin"></i> Proses Pembayaran Baru</a>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-6 offset-md-6">
-                <form action="" method="get">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Cari berdasarkan No. Tagihan/Invoice..." name="keyword" value="<?= esc($keyword ?? ''); ?>">
-                        <button class="btn btn-outline-primary" type="submit" id="button-addon2"><i class="bi bi-search"></i> Cari</button>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form action="" method="get" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small fw-bold">Mulai Tanggal</label>
+                        <input type="date" class="form-control" name="start_date" value="<?= esc($start_date ?? ''); ?>">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small fw-bold">Sampai Tanggal</label>
+                        <input type="date" class="form-control" name="end_date" value="<?= esc($end_date ?? ''); ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-muted small fw-bold">Pencarian</label>
+                        <input type="text" class="form-control" placeholder="Cari No. Tagihan..." name="keyword" value="<?= esc($keyword ?? ''); ?>">
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button class="btn btn-primary flex-grow-1" type="submit"><i class="bi bi-filter"></i> Filter</button>
+                        <a href="/pembayaran/cetak_laporan?start_date=<?= esc($start_date ?? ''); ?>&end_date=<?= esc($end_date ?? ''); ?>&keyword=<?= esc($keyword ?? ''); ?>" target="_blank" class="btn btn-secondary flex-grow-1" title="Cetak Laporan Hasil Filter"><i class="bi bi-printer"></i> Cetak</a>
                     </div>
                 </form>
             </div>

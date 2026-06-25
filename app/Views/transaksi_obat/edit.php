@@ -18,10 +18,10 @@
                     <div class="mb-4">
                         <label class="form-label">Pasien</label>
                         <?php $id_pendaftaran = (old('id_pendaftaran')) ? old('id_pendaftaran') : $transaksi['id_pendaftaran']; ?>
-                        <select class="form-select <?= ($validation->hasError('id_pendaftaran')) ? 'is-invalid' : ''; ?>" name="id_pendaftaran">
+                        <select class="form-select select2 <?= ($validation->hasError('id_pendaftaran')) ? 'is-invalid' : ''; ?>" name="id_pendaftaran">
                             <?php foreach($pendaftaran as $psn): ?>
                                 <option value="<?= $psn['id']; ?>" <?= $id_pendaftaran == $psn['id'] ? 'selected' : ''; ?>>
-                                    [<?= $psn['no_pendaftaran']; ?>] - <?= $psn['nama']; ?>
+                                    [<?= $psn['no_pendaftaran']; ?>] - <?= $psn['nama_pasien']; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -31,8 +31,8 @@
                         <div class="col-md-8">
                             <label class="form-label">Pilih Obat</label>
                             <?php $id_obat = (old('id_obat')) ? old('id_obat') : $transaksi['id_obat']; ?>
-                            <select class="form-select <?= ($validation->hasError('id_obat')) ? 'is-invalid' : ''; ?>" name="id_obat">
-                                <?php foreach($obat as $obt): ?>
+                            <select class="form-select select2 <?= ($validation->hasError('id_obat')) ? 'is-invalid' : ''; ?>" name="id_obat">
+                                <?php foreach($daftar_obat as $obt): ?>
                                     <option value="<?= $obt['id']; ?>" <?= $id_obat == $obt['id'] ? 'selected' : ''; ?>>
                                         <?= $obt['nama_obat']; ?> - Rp <?= number_format($obt['harga'], 0, ',', '.'); ?>
                                     </option>
@@ -59,4 +59,15 @@
         </div>
     </div>
 </div>
+
+<?= $this->section('scripts'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+});
+</script>
+<?= $this->endSection(); ?>
 <?= $this->endSection(); ?>

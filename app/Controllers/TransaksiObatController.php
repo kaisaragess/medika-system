@@ -54,32 +54,52 @@ class TransaksiObatController extends BaseController
         // Validasi input
         if (!$this->validate([
             'id_pendaftaran' => 'required',
-            'id_obat'        => 'required',
-            'qty'            => 'required|integer|greater_than[0]',
-            'aturan_pakai'   => 'required'
+            'id_obat.*'      => 'required',
+            'qty.*'          => 'required|integer|greater_than[0]',
+            'aturan_pakai.*' => 'required'
         ])) {
-            return redirect()->to('/transaksi_obat/create')->withInput();
+            return redirect()->to('/transaksi_obat/create')->withInput()->with('error', 'Mohon lengkapi data obat dengan benar.');
         }
 
-        // Ambil data obat untuk menghitung harga
         $obatModel = new \App\Models\ObatModel();
-        $idObat = $this->request->getPost('id_obat');
-        $qty = $this->request->getPost('qty');
-        $obat = $obatModel->find($idObat);
-        $tagihan_obat = $obat['harga'] * $qty;
+        
+        $idPendaftaran = $this->request->getPost('id_pendaftaran');
+        $idObatArr = $this->request->getPost('id_obat');
+        $qtyArr = $this->request->getPost('qty');
+        $aturanPakaiArr = $this->request->getPost('aturan_pakai');
 
-        $data = [
-            'id_pendaftaran' => $this->request->getPost('id_pendaftaran'),
-            'id_obat'        => $idObat,
-            'qty'            => $qty,
-            'aturan_pakai'   => $this->request->getPost('aturan_pakai'),
-            'tagihan_obat'   => $tagihan_obat
-        ];
+        $db = \Config\Database::connect();
+        $db->transStart();
 
-        $this->transaksiObatModel->save($data);
+        for($i = 0; $i < count($idObatArr); $i++) {
+            $idObat = $idObatArr[$i];
+            $qty = $qtyArr[$i];
+            $aturanPakai = $aturanPakaiArr[$i];
 
-        // Opsional: kurangi stok obat (jika diperlukan)
-        $obatModel->update($idObat, ['qty' => $obat['qty'] - $qty]);
+            $obat = $obatModel->find($idObat);
+            if($obat) {
+                $tagihan_obat = $obat['harga'] * $qty;
+
+                $data = [
+                    'id_pendaftaran' => $idPendaftaran,
+                    'id_obat'        => $idObat,
+                    'qty'            => $qty,
+                    'aturan_pakai'   => $aturanPakai,
+                    'tagihan_obat'   => $tagihan_obat
+                ];
+
+                $this->transaksiObatModel->insert($data);
+
+                // kurangi stok obat
+                $obatModel->update($idObat, ['qty' => $obat['qty'] - $qty]);
+            }
+        }
+
+        $db->transComplete();
+
+        if ($db->transStatus() === FALSE) {
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan transaksi.');
+        }
 
         return redirect()->to('/transaksi_obat')->with('pesan', 'Transaksi obat berhasil ditambahkan ke tagihan pasien!');
     }
