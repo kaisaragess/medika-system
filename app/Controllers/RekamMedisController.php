@@ -96,11 +96,11 @@ class RekamMedisController extends BaseController
                 'rules'  => 'required',
                 'errors' => ['required' => 'Keluhan pasien harus diisi.']
             ],
-            'file' => [
-                'rules'  => 'max_size[file,5120]|ext_in[file,pdf]',
+            'file.*' => [
+                'rules'  => 'max_size[file,5120]|ext_in[file,pdf,jpg,jpeg,png]',
                 'errors' => [
-                    'max_size' => 'Ukuran file PDF maksimal 5MB.',
-                    'ext_in'   => 'Format file harus berupa PDF.'
+                    'max_size' => 'Ukuran file maksimal 5MB.',
+                    'ext_in'   => 'Format file harus berupa PDF, JPG, JPEG, atau PNG.'
                 ]
             ]
         ])) {
@@ -108,13 +108,20 @@ class RekamMedisController extends BaseController
         }
 
         // Upload File Logic
-        $filePdf = $this->request->getFile('file');
-        $namaFile = null;
+        $files = $this->request->getFileMultiple('file');
+        $namaFiles = [];
 
-        if ($filePdf && $filePdf->isValid() && !$filePdf->hasMoved()) {
-            $namaFile = $filePdf->getRandomName();
-            $filePdf->move(FCPATH . 'uploads/rekam_medis', $namaFile);
+        if ($files) {
+            foreach ($files as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    $namaFile = $file->getRandomName();
+                    $file->move(FCPATH . 'uploads/rekam_medis', $namaFile);
+                    $namaFiles[] = $namaFile;
+                }
+            }
         }
+
+        $namaFileJson = count($namaFiles) > 0 ? json_encode($namaFiles) : null;
 
         // Simpan ke database
         $this->rekamMedisModel->save([
@@ -126,7 +133,7 @@ class RekamMedisController extends BaseController
             'diagnosa'        => $this->request->getPost('diagnosa'),
             'tindakan_medis'  => $this->request->getPost('tindakan_medis'),
             'tekanan_darah'   => $this->request->getPost('tekanan_darah'),
-            'file'            => $namaFile
+            'file'            => $namaFileJson
         ]);
 
         // Ubah status pendaftaran menjadi 'Diperiksa' (bukan Selesai, karena belum bayar)
@@ -195,11 +202,11 @@ class RekamMedisController extends BaseController
                 'rules'  => 'required',
                 'errors' => ['required' => 'Keluhan pasien harus diisi.']
             ],
-            'file' => [
-                'rules'  => 'max_size[file,5120]|ext_in[file,pdf]',
+            'file.*' => [
+                'rules'  => 'max_size[file,5120]|ext_in[file,pdf,jpg,jpeg,png]',
                 'errors' => [
-                    'max_size' => 'Ukuran file PDF maksimal 5MB.',
-                    'ext_in'   => 'Format file harus berupa PDF.'
+                    'max_size' => 'Ukuran file maksimal 5MB.',
+                    'ext_in'   => 'Format file harus berupa PDF, JPG, JPEG, atau PNG.'
                 ]
             ]
         ])) {
@@ -207,17 +214,41 @@ class RekamMedisController extends BaseController
         }
 
         $rekamMedisLama = $this->rekamMedisModel->find($id);
-        $filePdf = $this->request->getFile('file');
-        $namaFile = $rekamMedisLama['file']; // default tetap pakai file lama
+        $files = $this->request->getFileMultiple('file');
+        
+        $namaFileJson = $rekamMedisLama['file']; // default tetap pakai file lama
 
-        // Jika ada file baru yang diupload
-        if ($filePdf && $filePdf->isValid() && !$filePdf->hasMoved()) {
-            $namaFile = $filePdf->getRandomName();
-            $filePdf->move(FCPATH . 'uploads/rekam_medis', $namaFile);
+        // Cek jika ada file baru yang diupload (files array tidak kosong dan file pertama valid)
+        if ($files && isset($files[0]) && $files[0]->isValid()) {
+            $namaFilesBaru = [];
             
-            // Hapus file lama jika ada
-            if ($rekamMedisLama['file'] && file_exists(FCPATH . 'uploads/rekam_medis/' . $rekamMedisLama['file'])) {
-                unlink(FCPATH . 'uploads/rekam_medis/' . $rekamMedisLama['file']);
+            foreach ($files as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    $namaFile = $file->getRandomName();
+                    $file->move(FCPATH . 'uploads/rekam_medis', $namaFile);
+                    $namaFilesBaru[] = $namaFile;
+                }
+            }
+
+            if (count($namaFilesBaru) > 0) {
+                $namaFileJson = json_encode($namaFilesBaru);
+                
+                // Hapus file lama jika ada
+                if ($rekamMedisLama['file']) {
+                    $lamaArr = json_decode($rekamMedisLama['file'], true);
+                    if (is_array($lamaArr)) {
+                        foreach ($lamaArr as $fLama) {
+                            if (file_exists(FCPATH . 'uploads/rekam_medis/' . $fLama)) {
+                                unlink(FCPATH . 'uploads/rekam_medis/' . $fLama);
+                            }
+                        }
+                    } else {
+                        // Jika format lama bukan JSON (string biasa)
+                        if (file_exists(FCPATH . 'uploads/rekam_medis/' . $rekamMedisLama['file'])) {
+                            unlink(FCPATH . 'uploads/rekam_medis/' . $rekamMedisLama['file']);
+                        }
+                    }
+                }
             }
         }
 
@@ -230,7 +261,7 @@ class RekamMedisController extends BaseController
             'diagnosa'        => $this->request->getPost('diagnosa'),
             'tindakan_medis'  => $this->request->getPost('tindakan_medis'),
             'tekanan_darah'   => $this->request->getPost('tekanan_darah'),
-            'file'            => $namaFile
+            'file'            => $namaFileJson
         ]);
 
         session()->setFlashdata('pesan', 'Rekam medis berhasil diperbarui.');
@@ -245,8 +276,19 @@ class RekamMedisController extends BaseController
         $rekamMedis = $this->rekamMedisModel->find($id);
         
         // Hapus file fisik jika ada
-        if ($rekamMedis && $rekamMedis['file'] && file_exists(FCPATH . 'uploads/rekam_medis/' . $rekamMedis['file'])) {
-            unlink(FCPATH . 'uploads/rekam_medis/' . $rekamMedis['file']);
+        if ($rekamMedis && $rekamMedis['file']) {
+            $lamaArr = json_decode($rekamMedis['file'], true);
+            if (is_array($lamaArr)) {
+                foreach ($lamaArr as $fLama) {
+                    if (file_exists(FCPATH . 'uploads/rekam_medis/' . $fLama)) {
+                        unlink(FCPATH . 'uploads/rekam_medis/' . $fLama);
+                    }
+                }
+            } else {
+                if (file_exists(FCPATH . 'uploads/rekam_medis/' . $rekamMedis['file'])) {
+                    unlink(FCPATH . 'uploads/rekam_medis/' . $rekamMedis['file']);
+                }
+            }
         }
 
         $this->rekamMedisModel->delete($id);

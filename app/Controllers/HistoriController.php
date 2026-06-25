@@ -15,6 +15,7 @@ class HistoriController extends BaseController
             pd.no_pendaftaran,
             pd.tgl_daftar as tanggal,
             pd.status as status_pendaftaran,
+            ps.id as id_pasien,
             ps.nik,
             ps.nama as nama_pasien,
             pl.nama_poli,
@@ -36,9 +37,22 @@ class HistoriController extends BaseController
         
         $histori = $builder->get()->getResultArray();
 
+        // Ambil semua rekam medis untuk setiap pasien agar bisa dipilih di dropdown histori
+        $builderRm = $db->table('rekam_medis rm');
+        $builderRm->select('rm.*, pd.id_pasien, pd.no_pendaftaran');
+        $builderRm->join('pendaftaran pd', 'pd.id = rm.id_pendaftaran');
+        $builderRm->orderBy('rm.tanggal_periksa', 'DESC');
+        $semuaRm = $builderRm->get()->getResultArray();
+
+        $rekamMedisPasien = [];
+        foreach($semuaRm as $rm) {
+            $rekamMedisPasien[$rm['id_pasien']][] = $rm;
+        }
+
         $data = [
             'title'   => 'Histori Kunjungan & Rekam Medis',
-            'histori' => $histori
+            'histori' => $histori,
+            'rekamMedisPasien' => $rekamMedisPasien
         ];
 
         return view('histori/index', $data);

@@ -71,19 +71,33 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Dokumen PDF Terlampir</label>
+                        <label class="form-label">Dokumen/Foto Terlampir</label>
                         <?php if($rekam_medis['file']): ?>
-                            <div class="mb-2">
-                                <a href="<?= base_url('uploads/rekam_medis/' . $rekam_medis['file']); ?>" target="_blank" class="btn btn-sm btn-info text-white"><i class="bi bi-file-earmark-pdf"></i> Lihat File Saat Ini</a>
+                            <div class="mb-2 d-flex flex-wrap gap-2">
+                                <?php 
+                                    $files = json_decode($rekam_medis['file'], true);
+                                    if(is_array($files)) {
+                                        foreach($files as $idx => $f) {
+                                            $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+                                            $icon = ($ext == 'pdf') ? 'bi-file-earmark-pdf' : 'bi-image';
+                                            echo '<a href="'.base_url('uploads/rekam_medis/' . $f).'" target="_blank" class="btn btn-sm btn-info text-white"><i class="bi '.$icon.'"></i> File '.($idx+1).'</a>';
+                                        }
+                                    } else {
+                                        // Fallback for old single file
+                                        $ext = strtolower(pathinfo($rekam_medis['file'], PATHINFO_EXTENSION));
+                                        $icon = ($ext == 'pdf') ? 'bi-file-earmark-pdf' : 'bi-image';
+                                        echo '<a href="'.base_url('uploads/rekam_medis/' . $rekam_medis['file']).'" target="_blank" class="btn btn-sm btn-info text-white"><i class="bi '.$icon.'"></i> Lihat File</a>';
+                                    }
+                                ?>
                             </div>
                         <?php else: ?>
                             <div class="mb-2 text-muted fst-italic">Belum ada file dokumen yang diunggah.</div>
                         <?php endif; ?>
                         
-                        <label for="file" class="form-label mt-2">Ganti/Unggah Dokumen PDF (Opsional)</label>
-                        <input type="file" class="form-control <?= ($validation->hasError('file')) ? 'is-invalid' : ''; ?>" id="file" name="file" accept="application/pdf">
-                        <div class="invalid-feedback"><?= $validation->getError('file'); ?></div>
-                        <small class="text-muted">Maksimal ukuran file 5 MB. Format: .pdf. Memilih file baru akan menimpa file lama.</small>
+                        <label for="file" class="form-label mt-2">Ganti/Unggah Dokumen/Foto Baru (Opsional)</label>
+                        <input type="file" class="form-control <?= ($validation->hasError('file.*')) ? 'is-invalid' : ''; ?>" id="file" name="file[]" accept="application/pdf,image/jpeg,image/png" multiple>
+                        <div class="invalid-feedback"><?= $validation->getError('file.*'); ?></div>
+                        <small class="text-muted">Maksimal ukuran tiap file 5 MB. Format: .pdf, .jpg, .jpeg, .png. Memilih file baru akan menimpa file lama.</small>
                     </div>
 
                     <div class="d-flex justify-content-between">

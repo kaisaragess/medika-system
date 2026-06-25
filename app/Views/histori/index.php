@@ -77,21 +77,54 @@
                                                 </div>
                                                 <div class="col-12 mt-2">
                                                     <h6 class="fw-bold border-bottom pb-2">Catatan Rekam Medis</h6>
-                                                    <?php if($h['kd_rekam_medis']): ?>
-                                                        <div class="mb-2"><span class="badge bg-secondary">RM: <?= $h['kd_rekam_medis']; ?></span></div>
-                                                        <div class="mb-2"><span class="text-muted small d-block">Diagnosa:</span> <span class="text-danger fw-bold"><?= $h['diagnosa']; ?></span></div>
-                                                        <?php if($h['tindakan_medis']): ?>
-                                                            <div class="mb-2"><span class="text-muted small d-block">Tindakan Medis:</span> <?= $h['tindakan_medis']; ?></div>
-                                                        <?php endif; ?>
-                                                        <?php if($h['pdf_rekam_medis']): ?>
-                                                            <div class="mt-3">
-                                                                <a href="<?= base_url('uploads/rekam_medis/' . $h['pdf_rekam_medis']); ?>" target="_blank" class="btn btn-sm btn-outline-danger">
-                                                                    <i class="bi bi-file-earmark-pdf"></i> Buka File PDF Rekam Medis
-                                                                </a>
+                                                    <?php 
+                                                        $rmPasien = $rekamMedisPasien[$h['id_pasien']] ?? [];
+                                                    ?>
+                                                    <?php if(count($rmPasien) > 0): ?>
+                                                        <?php if(count($rmPasien) > 1): ?>
+                                                            <div class="mb-3">
+                                                                <label class="form-label small fw-bold">Pilihan Rekam Medis berdasarkan Tanggal Kunjungan:</label>
+                                                                <select class="form-select form-select-sm select-rm-history" data-target="rm-container-<?= $h['id_pendaftaran'] ?>">
+                                                                    <?php foreach($rmPasien as $idx => $rm): ?>
+                                                                        <option value="rm-<?= $rm['id'] ?>-<?= $h['id_pendaftaran'] ?>" <?= ($rm['kd_rekam_medis'] == $h['kd_rekam_medis']) ? 'selected' : '' ?>>
+                                                                            <?= date('d M Y', strtotime($rm['tanggal_periksa'])) ?> (Poliklinik / <?= $rm['no_pendaftaran'] ?>)
+                                                                        </option>
+                                                                    <?php endforeach; ?>
+                                                                </select>
                                                             </div>
                                                         <?php endif; ?>
+
+                                                        <div id="rm-container-<?= $h['id_pendaftaran'] ?>">
+                                                            <?php foreach($rmPasien as $idx => $rm): ?>
+                                                                <div class="rm-item" id="rm-<?= $rm['id'] ?>-<?= $h['id_pendaftaran'] ?>" style="<?= ($rm['kd_rekam_medis'] == $h['kd_rekam_medis'] || ($idx == 0 && !$h['kd_rekam_medis'])) ? 'display:block;' : 'display:none;' ?>">
+                                                                    <div class="mb-2"><span class="badge bg-secondary">RM: <?= $rm['kd_rekam_medis']; ?></span></div>
+                                                                    <div class="mb-2"><span class="text-muted small d-block">Diagnosa:</span> <span class="text-danger fw-bold"><?= $rm['diagnosa']; ?></span></div>
+                                                                    <?php if($rm['tindakan_medis']): ?>
+                                                                        <div class="mb-2"><span class="text-muted small d-block">Tindakan Medis:</span> <?= $rm['tindakan_medis']; ?></div>
+                                                                    <?php endif; ?>
+                                                                    <?php if($rm['file']): ?>
+                                                                        <div class="mt-3">
+                                                                            <?php 
+                                                                                $files = json_decode($rm['file'], true);
+                                                                                if(is_array($files)) {
+                                                                                    foreach($files as $fidx => $f) {
+                                                                                        $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+                                                                                        $icon = ($ext == 'pdf') ? 'bi-file-earmark-pdf' : 'bi-image';
+                                                                                        echo '<a href="'.base_url('uploads/rekam_medis/' . $f).'" target="_blank" class="btn btn-sm btn-outline-danger me-1 mb-1"><i class="bi '.$icon.'"></i> Buka File '.($fidx+1).'</a>';
+                                                                                    }
+                                                                                } else {
+                                                                                    $ext = strtolower(pathinfo($rm['file'], PATHINFO_EXTENSION));
+                                                                                    $icon = ($ext == 'pdf') ? 'bi-file-earmark-pdf' : 'bi-image';
+                                                                                    echo '<a href="'.base_url('uploads/rekam_medis/' . $rm['file']).'" target="_blank" class="btn btn-sm btn-outline-danger me-1 mb-1"><i class="bi '.$icon.'"></i> Buka File</a>';
+                                                                                }
+                                                                            ?>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        </div>
                                                     <?php else: ?>
-                                                        <div class="alert alert-light border fst-italic text-center py-3">Belum ada data rekam medis yang diinputkan untuk kunjungan ini.</div>
+                                                        <div class="alert alert-light border fst-italic text-center py-3">Belum ada data rekam medis yang diinputkan untuk kunjungan maupun pasien ini.</div>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
@@ -130,4 +163,34 @@
         .table-responsive { overflow: visible !important; }
     }
 </style>
+
+<?= $this->section('scripts'); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rmSelects = document.querySelectorAll('.select-rm-history');
+    
+    rmSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const targetContainerId = this.getAttribute('data-target');
+            const targetContainer = document.getElementById(targetContainerId);
+            const selectedRmId = this.value;
+            
+            if(targetContainer) {
+                // Hide all rm-items inside this container
+                const rmItems = targetContainer.querySelectorAll('.rm-item');
+                rmItems.forEach(item => {
+                    item.style.display = 'none';
+                });
+                
+                // Show the selected one
+                const selectedItem = targetContainer.querySelector('#' + selectedRmId);
+                if(selectedItem) {
+                    selectedItem.style.display = 'block';
+                }
+            }
+        });
+    });
+});
+</script>
+<?= $this->endSection(); ?>
 <?= $this->endSection(); ?>

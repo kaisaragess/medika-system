@@ -44,12 +44,28 @@
                             <td>: <br><span class="text-muted d-block mt-1"><?= $rekam_medis['tindakan_medis'] ? nl2br($rekam_medis['tindakan_medis']) : '-'; ?></span></td>
                         </tr>
                         <tr>
-                            <th>File Dokumen PDF</th>
+                            <th>Dokumen/Foto Terlampir</th>
                             <td>: 
                                 <?php if($rekam_medis['file']): ?>
-                                    <a href="<?= base_url('uploads/rekam_medis/' . $rekam_medis['file']); ?>" target="_blank" class="btn btn-sm btn-outline-info mt-1"><i class="bi bi-file-earmark-pdf"></i> Buka File Rekam Medis (PDF)</a>
+                                    <div class="mt-1 d-flex flex-wrap gap-2">
+                                    <?php 
+                                        $files = json_decode($rekam_medis['file'], true);
+                                        if(is_array($files)) {
+                                            foreach($files as $idx => $f) {
+                                                $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+                                                $icon = ($ext == 'pdf') ? 'bi-file-earmark-pdf' : 'bi-image';
+                                                echo '<a href="'.base_url('uploads/rekam_medis/' . $f).'" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi '.$icon.'"></i> Buka File '.($idx+1).'</a>';
+                                            }
+                                        } else {
+                                            // Fallback for old single file
+                                            $ext = strtolower(pathinfo($rekam_medis['file'], PATHINFO_EXTENSION));
+                                            $icon = ($ext == 'pdf') ? 'bi-file-earmark-pdf' : 'bi-image';
+                                            echo '<a href="'.base_url('uploads/rekam_medis/' . $rekam_medis['file']).'" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi '.$icon.'"></i> Buka File</a>';
+                                        }
+                                    ?>
+                                    </div>
                                 <?php else: ?>
-                                    <span class="text-muted fst-italic">Tidak ada file PDF terlampir.</span>
+                                    <span class="text-muted fst-italic">Tidak ada file terlampir.</span>
                                 <?php endif; ?>
                             </td>
                         </tr>

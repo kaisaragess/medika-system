@@ -82,10 +82,10 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="file" class="form-label">Upload Dokumen PDF (Opsional)</label>
-                        <input type="file" class="form-control <?= ($validation->hasError('file')) ? 'is-invalid' : ''; ?>" id="file" name="file" accept="application/pdf">
-                        <div class="invalid-feedback"><?= $validation->getError('file'); ?></div>
-                        <small class="text-muted">Maksimal ukuran file 5 MB. Format: .pdf</small>
+                        <label for="file" class="form-label">Upload Dokumen/Foto (Opsional)</label>
+                        <input type="file" class="form-control <?= ($validation->hasError('file.*')) ? 'is-invalid' : ''; ?>" id="file" name="file[]" accept="application/pdf,image/jpeg,image/png" multiple>
+                        <div class="invalid-feedback"><?= $validation->getError('file.*'); ?></div>
+                        <small class="text-muted">Maksimal ukuran tiap file 5 MB. Format: .pdf, .jpg, .jpeg, .png (Bisa pilih lebih dari satu)</small>
                     </div>
 
                     <div class="d-flex justify-content-between">
