@@ -66,11 +66,11 @@ CI_ENVIRONMENT = development
 
 database.default.hostname = localhost
 database.default.database = medika_system
-database.default.username = root
+database.default.username = root 
 database.default.password = 
 database.default.DBDriver = MySQLi
 ```
-(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
+(Catatan: Sesuaikan username dan password. Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
 
 
 ## Langkah 5: Buat Database
@@ -79,10 +79,6 @@ Nyalakan Apache dan MySQL di XAMPP.
 Buka browser dan masuk ke http://localhost/phpmyadmin/.
 
 Buat database baru dengan nama: medika_system.
-
-(Pilih Salah Satu):
-
-Cara Otomatis (Migrasi): Jika ingin menggunakan migrasi, jalankan php spark migrate dan php spark db:seed DatabaseSeeder di terminal.
 
 Cara Manual (Import SQL): Cari file bernama medika_system.sql di dalam folder project ini, lalu klik menu Import di phpMyAdmin dan upload file tersebut.
 
