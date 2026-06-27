@@ -51,7 +51,7 @@ composer install
 ```
 Tunggu hingga proses unduhan selesai.
 
-## Langkah 4: Konfigurasi Environment (.env)
+# Langkah 4: Konfigurasi Environment (.env)
 Kita perlu memberi tahu aplikasi ini cara terhubung ke database di laptopmu.
 
 Buka folder medika_system menggunakan code editor (seperti VS Code).
@@ -73,7 +73,7 @@ database.default.DBDriver = MySQLi
 (Catatan: Sesuaikan username dan password. Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
 
 
-## Langkah 5: Buat Database
+# Langkah 5: Buat Database
 Nyalakan Apache dan MySQL di XAMPP.
 
 Buka browser dan masuk ke http://localhost/phpmyadmin/.
@@ -82,7 +82,7 @@ Buat database baru dengan nama: medika_system.
 
 Cara Manual (Import SQL): Cari file bernama medika_system.sql di dalam folder project ini, lalu klik menu Import di phpMyAdmin dan upload file tersebut.
 
-Langkah 6: Jalankan Aplikasi! 🎉
+# Langkah 6: Jalankan Aplikasi! 🎉
 Semuanya sudah siap! Sekarang kita tinggal menyalakan server lokal bawaan CodeIgniter.
 Di terminal/CMD, ketik:
 
