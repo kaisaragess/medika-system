@@ -82,7 +82,7 @@ Buat database baru dengan nama: medika_system.
 
 Cara Manual (Import SQL): Cari file bernama medika_system.sql di dalam folder project ini, lalu klik menu Import di phpMyAdmin dan upload file tersebut.
 
-# Langkah 6: Jalankan Aplikasi! 🎉
+## Langkah 6: Jalankan Aplikasi! 🎉
 Semuanya sudah siap! Sekarang kita tinggal menyalakan server lokal bawaan CodeIgniter.
 Di terminal/CMD, ketik:
 
