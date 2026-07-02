@@ -42,7 +42,7 @@ Bash
 cd medika_system
 ```
 
-# Langkah 3: Install Dependencies (Composer)
+## Langkah 3: Install Dependencies (Composer)
 Karena CodeIgniter 4 menggunakan beberapa pustaka pihak ketiga, kita harus mengunduhnya dulu melalui Composer. Di dalam terminal yang sama, jalankan:
 
 ```
@@ -66,11 +66,11 @@ CI_ENVIRONMENT = development
 
 database.default.hostname = localhost
 database.default.database = medika_system
-database.default.username = root
+database.default.username = root 
 database.default.password = 
 database.default.DBDriver = MySQLi
 ```
-(Catatan: Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
+(Catatan: Sesuaikan username dan password. Jika phpMyAdmin-mu menggunakan password, isi bagian password = )
 
 
 ## Langkah 5: Buat Database
@@ -80,13 +80,9 @@ Buka browser dan masuk ke http://localhost/phpmyadmin/.
 
 Buat database baru dengan nama: medika_system.
 
-(Pilih Salah Satu):
-
-Cara Otomatis (Migrasi): Jika ingin menggunakan migrasi, jalankan php spark migrate dan php spark db:seed DatabaseSeeder di terminal.
-
 Cara Manual (Import SQL): Cari file bernama medika_system.sql di dalam folder project ini, lalu klik menu Import di phpMyAdmin dan upload file tersebut.
 
-Langkah 6: Jalankan Aplikasi! 🎉
+## Langkah 6: Jalankan Aplikasi! 🎉
 Semuanya sudah siap! Sekarang kita tinggal menyalakan server lokal bawaan CodeIgniter.
 Di terminal/CMD, ketik:
 
