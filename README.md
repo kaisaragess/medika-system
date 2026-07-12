@@ -80,7 +80,14 @@ Buka browser dan masuk ke http://localhost/phpmyadmin/.
 
 Buat database baru dengan nama: medika_system.
 
-Cara Manual (Import SQL): Cari file bernama medika_system.sql di dalam folder project ini, lalu klik menu Import di phpMyAdmin dan upload file tersebut.
+**Cara Import Database (dari file zip):**
+1. Cari file bernama `medika_system_data_schema_table.zip` di dalam folder project ini.
+2. Ekstrak (unzip) file `medika_system_data_schema_table.zip` tersebut. Kamu akan mendapatkan folder `medika_system_data_schema_table` yang berisi beberapa file `.sql` (skema dan data tabel).
+3. Di phpMyAdmin, pastikan kamu sudah memilih (klik) database `medika_system` yang baru saja dibuat.
+4. Klik tab **Import**.
+5. Klik **Choose File** (Pilih File) dan upload file-file `.sql` yang ada di dalam folder hasil ekstraksi tersebut secara berurutan.
+
+*(Tips Cepat: Karena file terpisah per tabel, kamu bisa menggabungkan semua file `.sql` tersebut menjadi satu file terlebih dahulu jika tidak ingin meng-import satu per satu. Buka Terminal/CMD di dalam folder hasil ekstraksi, lalu jalankan perintah `copy /b *.sql gabungan_tabel.sql` (Windows CMD) atau `cat *.sql > gabungan_tabel.sql` (Git Bash). Setelah itu, kamu cukup meng-import file `gabungan_tabel.sql` tersebut ke phpMyAdmin).*
 
 ## Langkah 6: Jalankan Aplikasi! 🎉
 Semuanya sudah siap! Sekarang kita tinggal menyalakan server lokal bawaan CodeIgniter.
