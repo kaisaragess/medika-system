@@ -30,16 +30,23 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
                             <select class="form-select" id="jenis_kelamin" name="jenis_kelamin">
                                 <option value="L" <?= old('jenis_kelamin') == 'L' ? 'selected' : ''; ?>>Laki-laki</option>
                                 <option value="P" <?= old('jenis_kelamin') == 'P' ? 'selected' : ''; ?>>Perempuan</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
                             <input type="date" class="form-control" id="tgl_lahir" name="tgl_lahir" value="<?= old('tgl_lahir'); ?>">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="Aktif" <?= old('status') == 'Aktif' ? 'selected' : ''; ?>>Aktif</option>
+                                <option value="Nonaktif" <?= old('status') == 'Nonaktif' ? 'selected' : ''; ?>>Nonaktif</option>
+                            </select>
                         </div>
                     </div>
 

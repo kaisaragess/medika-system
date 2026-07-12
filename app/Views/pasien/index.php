@@ -42,6 +42,7 @@
                                 <th>Nama Pasien</th>
                                 <th>L/P</th>
                                 <th>No. Telepon</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -56,9 +57,10 @@
                                     <td><?= $p['jenis_kelamin']; ?></td>
                                     <td><?= $p['no_telp']; ?></td>
                                     <td class="text-center">
+                                        <span class="badge bg-<?= $p['status'] == 'Aktif' ? 'success' : 'danger' ?>"><?= $p['status']; ?></span>
+                                    </td>
+                                    <td class="text-center">
                                         <a href="/pasien/edit/<?= $p['id']; ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Edit</a>
-                                        
-                                        <a href="/pasien/delete/<?= $p['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus data pasien ini? Semua data terkait pendaftaran pasien ini juga akan ikut terhapus.');"><i class="bi bi-trash"></i> Hapus</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

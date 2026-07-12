@@ -73,7 +73,8 @@ class PasienController extends BaseController
             'jenis_kelamin' => $this->request->getPost('jenis_kelamin'),
             'tgl_lahir'     => $this->request->getPost('tgl_lahir'),
             'alamat'        => $this->request->getPost('alamat'),
-            'no_telp'       => $this->request->getPost('no_telp')
+            'no_telp'       => $this->request->getPost('no_telp'),
+            'status'        => $this->request->getPost('status') ?? 'Aktif'
         ]);
 
         session()->setFlashdata('pesan', 'Data pasien berhasil ditambahkan.');
@@ -129,19 +130,13 @@ class PasienController extends BaseController
             'jenis_kelamin' => $this->request->getPost('jenis_kelamin'),
             'tgl_lahir'     => $this->request->getPost('tgl_lahir'),
             'alamat'        => $this->request->getPost('alamat'),
-            'no_telp'       => $this->request->getPost('no_telp')
+            'no_telp'       => $this->request->getPost('no_telp'),
+            'status'        => $this->request->getPost('status') ?? 'Aktif'
         ]);
 
         session()->setFlashdata('pesan', 'Data pasien berhasil diubah.');
         return redirect()->to('/pasien');
     }
 
-    // delete
-    public function delete($id)
-    {
-        $this->pasienModel->delete($id);
-        
-        session()->setFlashdata('pesan', 'Data pasien berhasil dihapus.');
-        return redirect()->to('/pasien');
-    }
+
 }

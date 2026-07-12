@@ -12,7 +12,7 @@ class PasienModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nik', 'nama', 'jenis_kelamin', 'tgl_lahir', 'alamat', 'no_telp'];
+    protected $allowedFields    = ['nik', 'nama', 'jenis_kelamin', 'tgl_lahir', 'alamat', 'no_telp', 'status'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
